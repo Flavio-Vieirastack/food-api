@@ -8,9 +8,10 @@ import lombok.Data;
 
 @Entity
 @Data
-public class Kitchen {
+public class Permission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private  Long id;
-    private  String name;
+    private Long id;
+    private String name;
+    private String description;
 }
