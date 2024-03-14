@@ -2,7 +2,7 @@
 INSERT INTO kitchen (name) VALUES ('Tailandesa')
 INSERT INTO kitchen (name) VALUES ('Indiana')
 
-INSERT INTO PaymentType (description) VALUES ('Pagamento teste')
+INSERT INTO Payment_Type (description) VALUES ('Pagamento teste')
 
 INSERT INTO Permission (name, description) VALUES ('Permissão teste', 'Descrição teste')
 
