@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Setter
@@ -16,5 +17,8 @@ public class KitchenService {
 
    public List<Kitchen> getAll() {
         return kitchenRepository.findAll();
+    }
+   public Optional<Kitchen> getOne(Long id) {
+       return kitchenRepository.findById(id);
     }
 }
