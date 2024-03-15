@@ -32,7 +32,7 @@ public class KitchenController {
     @GetMapping("/{id}")
     public ResponseEntity<Kitchen> findOne(@PathVariable Long id) {
         var kitchen = kitchenService.getOne(id);
-        return optionalReturnUtils.getResponseOrNotFoundStatus(kitchen);
+        return optionalReturnUtils.getResponseOrNotFoundStatusWithNoContent(kitchen);
     }
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -42,14 +42,14 @@ public class KitchenController {
     @PutMapping("/{id}")
     public ResponseEntity<Kitchen> update(@RequestBody KitchenDTO kitchenDTO, @PathVariable Long id){
        var updatedKitchen = kitchenService.update(toModel(kitchenDTO), id);
-        return optionalReturnUtils.getResponseOrNotFoundStatus(updatedKitchen);
+        return optionalReturnUtils.getResponseOrNotFoundStatusWithNoContent(updatedKitchen);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Kitchen> delete(@PathVariable Long id) {
         try {
             var deletedKitchen = kitchenService.delete(id);
-            return optionalReturnUtils.getResponseOrNotFoundStatus(deletedKitchen);
+            return optionalReturnUtils.getResponseOrNotFoundStatusWithNoContent(deletedKitchen);
         } catch(DataIntegrityViolationException ex) {
            return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
