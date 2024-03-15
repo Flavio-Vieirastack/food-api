@@ -8,6 +8,8 @@ INSERT INTO Permission (name, description) VALUES ('Permissão teste', 'Descriç
 
 INSERT INTO State (name) VALUES ('CE')
 
+INSERT INTO City (name, state_id) VALUES ('Crato', 1)
+
 INSERT INTO Restaurant (name, delivery_tax, kitchen_id) VALUES ('Thai gourmet', 10, 1)
 INSERT INTO Restaurant (name, delivery_tax, kitchen_id) VALUES ('Portuguesa', 20, 1)
 INSERT INTO Restaurant (name, delivery_tax, kitchen_id) VALUES ('Indiana', 5.5, 2)

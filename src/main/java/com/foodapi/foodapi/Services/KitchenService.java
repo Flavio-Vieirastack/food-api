@@ -1,13 +1,11 @@
 package com.foodapi.foodapi.Services;
 
-import com.foodapi.foodapi.DTO.KitchenDTO;
 import com.foodapi.foodapi.model.Kitchen;
 import com.foodapi.foodapi.repository.KitchenRepository;
 import jakarta.transaction.Transactional;
 import lombok.Setter;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -44,11 +42,11 @@ public class KitchenService {
                 BeanUtils.copyProperties(kitchen, kitchenInDB.get(), "id");
                 return Optional.of(kitchenRepository.save(kitchenInDB.get()));
             } catch (Exception ex) {
+                // Adicionar erro
                 System.out.println(ex.getCause().toString());
             }
         }
         return Optional.empty();
-        // Adicionar erro
     }
 
     @Transactional
