@@ -32,6 +32,23 @@ public class KitchenController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void save(@RequestBody KitchenDTO kitchenDTO) {
-        kitchenService.save(mapper.dtoToModel(kitchenDTO, Kitchen.class));
+        kitchenService.save(toModel(kitchenDTO));
+    }
+    @PutMapping("/{id}")
+    public ResponseEntity<Kitchen> update(@RequestBody KitchenDTO kitchenDTO, @PathVariable Long id){
+       var updatedKitchen = kitchenService.update(toModel(kitchenDTO), id);
+        return updatedKitchen.map(ResponseEntity::ok).orElseGet(
+                () -> ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/${id}")
+    public ResponseEntity<Kitchen> delete(@PathVariable Long id) {
+        var deletedKitchen = kitchenService.delete(id);
+        return deletedKitchen.map(ResponseEntity::ok).orElseGet(
+                () -> ResponseEntity.notFound().build());
+    }
+
+    private Kitchen toModel(KitchenDTO kitchenDTO) {
+        return mapper.dtoToModel(kitchenDTO, Kitchen.class);
     }
 }
