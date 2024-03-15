@@ -3,6 +3,7 @@ package com.foodapi.foodapi.controllers;
 import com.foodapi.foodapi.DTO.KitchenDTO;
 import com.foodapi.foodapi.Services.KitchenService;
 import com.foodapi.foodapi.core.utils.ApiObjectMapper;
+import com.foodapi.foodapi.core.utils.OptionalReturnUtils;
 import com.foodapi.foodapi.model.Kitchen;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -20,6 +21,9 @@ public class KitchenController {
     @Autowired
     private ApiObjectMapper<Kitchen> mapper;
 
+    @Autowired
+    private OptionalReturnUtils<Kitchen> optionalReturnUtils;
+
     @GetMapping
     public ResponseEntity<List<Kitchen>> getAll() {
 
@@ -28,8 +32,7 @@ public class KitchenController {
     @GetMapping("/{id}")
     public ResponseEntity<Kitchen> findOne(@PathVariable Long id) {
         var kitchen = kitchenService.getOne(id);
-        return kitchen.map(ResponseEntity::ok).orElseGet(
-                () -> ResponseEntity.notFound().build());
+        return optionalReturnUtils.getResponseOrNotFoundStatus(kitchen);
     }
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -39,22 +42,21 @@ public class KitchenController {
     @PutMapping("/{id}")
     public ResponseEntity<Kitchen> update(@RequestBody KitchenDTO kitchenDTO, @PathVariable Long id){
        var updatedKitchen = kitchenService.update(toModel(kitchenDTO), id);
-        return updatedKitchen.map(ResponseEntity::ok).orElseGet(
-                () -> ResponseEntity.notFound().build());
+        return optionalReturnUtils.getResponseOrNotFoundStatus(updatedKitchen);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Kitchen> delete(@PathVariable Long id) {
         try {
             var deletedKitchen = kitchenService.delete(id);
-            return deletedKitchen.map(ResponseEntity::ok).orElseGet(
-                    () -> ResponseEntity.notFound().build());
+            return optionalReturnUtils.getResponseOrNotFoundStatus(deletedKitchen);
         } catch(DataIntegrityViolationException ex) {
            return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
     }
 
     private Kitchen toModel(KitchenDTO kitchenDTO) {
+
         return mapper.dtoToModel(kitchenDTO, Kitchen.class);
     }
 }

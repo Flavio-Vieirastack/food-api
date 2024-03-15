@@ -1,6 +1,7 @@
 package com.foodapi.foodapi.controllers;
 
 import com.foodapi.foodapi.Services.RestaurantService;
+import com.foodapi.foodapi.core.utils.OptionalReturnUtils;
 import com.foodapi.foodapi.model.Restaurant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,13 +19,15 @@ public class RestaurantController {
     @Autowired
     RestaurantService restaurantService;
 
+    @Autowired
+    OptionalReturnUtils<Restaurant> optionalReturnUtils;
+
     @GetMapping
     public ResponseEntity<List<Restaurant>> getAll() {
         return ResponseEntity.ok(restaurantService.getAll());
     }@GetMapping("{id}")
     public ResponseEntity<Restaurant> getOne(@PathVariable Long id) {
         var restaurant = restaurantService.getOne(id);
-        return restaurant.map(ResponseEntity::ok).orElseGet(
-                () -> ResponseEntity.notFound().build());
+        return optionalReturnUtils.getResponseOrNotFoundStatus(restaurant);
     }
 }
