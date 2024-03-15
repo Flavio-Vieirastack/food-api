@@ -5,6 +5,7 @@ import com.foodapi.foodapi.Services.KitchenService;
 import com.foodapi.foodapi.core.utils.ApiObjectMapper;
 import com.foodapi.foodapi.model.Kitchen;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,7 @@ public class KitchenController {
 
     @GetMapping
     public ResponseEntity<List<Kitchen>> getAll() {
+
         return ResponseEntity.ok(kitchenService.getAll());
     }
     @GetMapping("/{id}")
@@ -41,11 +43,15 @@ public class KitchenController {
                 () -> ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/${id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Kitchen> delete(@PathVariable Long id) {
-        var deletedKitchen = kitchenService.delete(id);
-        return deletedKitchen.map(ResponseEntity::ok).orElseGet(
-                () -> ResponseEntity.notFound().build());
+        try {
+            var deletedKitchen = kitchenService.delete(id);
+            return deletedKitchen.map(ResponseEntity::ok).orElseGet(
+                    () -> ResponseEntity.notFound().build());
+        } catch(DataIntegrityViolationException ex) {
+           return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
     }
 
     private Kitchen toModel(KitchenDTO kitchenDTO) {

@@ -7,6 +7,7 @@ import jakarta.transaction.Transactional;
 import lombok.Setter;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,40 +19,46 @@ public class KitchenService {
     @Autowired
     private KitchenRepository kitchenRepository;
 
-   public List<Kitchen> getAll() {
+    public List<Kitchen> getAll() {
         return kitchenRepository.findAll();
     }
-   public Optional<Kitchen> getOne(Long id) {
-       return kitchenRepository.findById(id);
-    }
-    @Transactional
-    public void save(Kitchen kitchen){
-       try {
-           kitchenRepository.save(kitchen);
-       } catch (Exception ex) {
-           System.out.println(ex.getCause().toString());
-       }
-    }@Transactional
-    public Optional<Kitchen> update(Kitchen kitchen, Long id){
-       var kitchenInDB = getOne(id);
-       if(kitchenInDB.isPresent()){
-           try {
-               BeanUtils.copyProperties(kitchen, kitchenInDB.get(), "id");
-              return Optional.of(kitchenRepository.save(kitchenInDB.get()));
-           } catch (Exception ex) {
-               System.out.println(ex.getCause().toString());
-           }
-       }
-       return Optional.empty();
-       // Adicionar erro
+
+    public Optional<Kitchen> getOne(Long id) {
+        return kitchenRepository.findById(id);
     }
 
     @Transactional
-    public  Optional<Kitchen> delete(Long id) {
-       var kitchen = kitchenRepository.findById(id);
-       if (kitchen.isPresent()){
-           kitchenRepository.deleteById(id);
-       }
-       return Optional.empty();
+    public void save(Kitchen kitchen) {
+        try {
+            kitchenRepository.save(kitchen);
+        } catch (Exception ex) {
+            System.out.println(ex.getCause().toString());
+        }
+    }
+
+    @Transactional
+    public Optional<Kitchen> update(Kitchen kitchen, Long id) {
+        var kitchenInDB = getOne(id);
+        if (kitchenInDB.isPresent()) {
+            try {
+                BeanUtils.copyProperties(kitchen, kitchenInDB.get(), "id");
+                return Optional.of(kitchenRepository.save(kitchenInDB.get()));
+            } catch (Exception ex) {
+                System.out.println(ex.getCause().toString());
+            }
+        }
+        return Optional.empty();
+        // Adicionar erro
+    }
+
+    @Transactional
+    public Optional<Kitchen> delete(Long id) {
+        var kitchen = kitchenRepository.findById(id);
+        if (kitchen.isPresent()) {
+            kitchenRepository.deleteById(id);
+            return kitchen;
+        }
+        return Optional.empty();
+
     }
 }
