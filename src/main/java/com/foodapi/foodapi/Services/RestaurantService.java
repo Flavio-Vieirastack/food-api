@@ -4,6 +4,7 @@ import com.foodapi.foodapi.model.Restaurant;
 import com.foodapi.foodapi.repository.KitchenRepository;
 import com.foodapi.foodapi.repository.RestaurantRepository;
 import jakarta.transaction.Transactional;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,7 @@ public class RestaurantService {
     }
 
     @Transactional
-    public Optional<Restaurant> save(Restaurant restaurant) {
+    public Optional<Restaurant> save(@NotNull Restaurant restaurant) {
         var kitchenId = restaurant.getKitchen().getId();
         var kitchen = kitchenRepository.findById(kitchenId);
         if (kitchen.isPresent()) {
@@ -67,17 +68,20 @@ public class RestaurantService {
         }
     }
     // Remover quando houver melhor forma de tratar
-    private void copyPropertiesIfNull(Restaurant restaurant, Restaurant restaurantInDB) {
+    private void copyPropertiesIfNull(@NotNull Restaurant restaurant, Restaurant restaurantInDB) {
         if (restaurant.getDeliveryTax() != null) {
             BeanUtils.copyProperties(
-                    restaurant, restaurantInDB, "id", "kitchen", "name");
+                    restaurant, restaurantInDB,
+                    "id", "kitchen", "name", "paymentTypes");
         } else if (restaurant.getName() != null) {
             BeanUtils.copyProperties(
-                    restaurant, restaurantInDB, "id", "kitchen", "deliveryTax");
+                    restaurant, restaurantInDB,
+                    "id", "kitchen", "deliveryTax", "paymentTypes");
 
         } else {
             BeanUtils.copyProperties(
-                    restaurant, restaurantInDB, "id", "kitchen");
+                    restaurant, restaurantInDB,
+                    "id", "kitchen", "paymentTypes");
 
         }
 
