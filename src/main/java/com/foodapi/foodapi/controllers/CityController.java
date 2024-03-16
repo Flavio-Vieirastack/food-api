@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/city")
+@RequestMapping("/cities")
 public class CityController {
     @Autowired
     private CityService cityService;
@@ -25,7 +25,7 @@ public class CityController {
     private OptionalReturnUtils<City> optionalReturnUtils;
 
     @GetMapping
-    public ResponseEntity<List<City>> getAll(){
+    public ResponseEntity<List<City>> getAll() {
         return ResponseEntity.ok(cityService.getAll());
     }
 
@@ -45,13 +45,13 @@ public class CityController {
     public ResponseEntity<City> update(
             @RequestBody CityDTO cityDTO, @PathVariable Long id) {
         var updatedCity = cityService.update(toModel(cityDTO), id);
-        return optionalReturnUtils.getResponseOrBadRequestStatusForOk(updatedCity);
+        return optionalReturnUtils.getResponseOrNotFoundStatusWithNoContent(updatedCity);
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<City> delete(@PathVariable Long id) {
-        cityService.delete(id);
-        return ResponseEntity.ok().build();
+        var deletedCity = cityService.delete(id);
+        return optionalReturnUtils.getResponseOrNotFoundStatusWithNoContent(deletedCity);
     }
 
     private City toModel(CityDTO cityDTO) {
@@ -59,6 +59,6 @@ public class CityController {
         var state = new State();
         state.setId(cityDTO.stateID());
         cityModel.setState(state);
-        return  cityModel;
+        return cityModel;
     }
 }
