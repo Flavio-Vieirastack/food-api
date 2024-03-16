@@ -1,6 +1,7 @@
 package com.foodapi.foodapi.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.foodapi.foodapi.model.Embedded.RestaurantAddress;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -27,4 +28,7 @@ public class Restaurant {
     )
     @JsonIgnore
     private List<PaymentType> paymentTypes = new ArrayList<>();
+
+    @Embedded
+    private RestaurantAddress restaurantAddress;
 }
