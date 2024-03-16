@@ -54,6 +54,11 @@ public class KitchenController {
         }
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<Kitchen>> findByName(@RequestParam String name) {
+        return ResponseEntity.ok(kitchenService.findByName(name));
+    }
+
     private Kitchen toModel(KitchenDTO kitchenDTO) {
 
         return mapper.dtoToModel(kitchenDTO, Kitchen.class);

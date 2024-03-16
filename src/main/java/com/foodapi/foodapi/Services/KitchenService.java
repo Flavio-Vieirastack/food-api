@@ -22,6 +22,10 @@ public class KitchenService {
         return kitchenRepository.findById(id);
     }
 
+    public List<Kitchen> findByName(String name) {
+        return kitchenRepository.findByNameContaining(name);
+    }
+
     @Transactional
     public void save(Kitchen kitchen) {
         try {
