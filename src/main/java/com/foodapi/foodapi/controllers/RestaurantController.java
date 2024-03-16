@@ -64,4 +64,10 @@ public class RestaurantController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<Restaurant> delete(@PathVariable Long id) {
+        restaurantService.delete(id);
+        return ResponseEntity.ok().build();
+    }
 }

@@ -14,10 +14,10 @@ import java.util.Optional;
 @Service
 public class RestaurantService {
     @Autowired
-    RestaurantRepository restaurantRepository;
+    private RestaurantRepository restaurantRepository;
 
     @Autowired
-    KitchenRepository kitchenRepository;
+    private KitchenRepository kitchenRepository;
 
     public List<Restaurant> getAll() {
         return restaurantRepository.findAll();
@@ -45,10 +45,10 @@ public class RestaurantService {
 
     @Transactional
     public Optional<Restaurant> update(Restaurant restaurant, Long id) {
-        var restaurantInDB = restaurantRepository.findById(id);
+        var restaurantInDB = getOne(id);
         if (restaurantInDB.isPresent()) {
             try {
-                copyPropertiesIfNull(restaurant, restaurantInDB);
+                copyPropertiesIfNull(restaurant, restaurantInDB.get());
                 return Optional.of(restaurantRepository.save(restaurantInDB.get()));
             } catch (Exception ex) {
                 // Adicionar erro
@@ -57,18 +57,27 @@ public class RestaurantService {
         }
         return Optional.empty();
     }
+    @Transactional
+    public void delete(Long id) {
+        try {
+            restaurantRepository.deleteById(id);
+        } catch (Exception ex) {
+            // Adicionar erro
+            System.out.println(ex.getCause().toString());
+        }
+    }
     // Remover quando houver melhor forma de tratar
-    private void copyPropertiesIfNull(Restaurant restaurant, Optional<Restaurant> restaurantInDB) {
+    private void copyPropertiesIfNull(Restaurant restaurant, Restaurant restaurantInDB) {
         if (restaurant.getDeliveryTax() != null) {
             BeanUtils.copyProperties(
-                    restaurant, restaurantInDB.get(), "id", "kitchen", "name");
+                    restaurant, restaurantInDB, "id", "kitchen", "name");
         } else if (restaurant.getName() != null) {
             BeanUtils.copyProperties(
-                    restaurant, restaurantInDB.get(), "id", "kitchen", "deliveryTax");
+                    restaurant, restaurantInDB, "id", "kitchen", "deliveryTax");
 
         } else {
             BeanUtils.copyProperties(
-                    restaurant, restaurantInDB.get(), "id", "kitchen");
+                    restaurant, restaurantInDB, "id", "kitchen");
 
         }
 

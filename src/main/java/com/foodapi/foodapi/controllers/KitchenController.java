@@ -35,14 +35,13 @@ public class KitchenController {
         return optionalReturnUtils.getResponseOrNotFoundStatusWithNoContent(kitchen);
     }
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
     public void save(@RequestBody KitchenDTO kitchenDTO) {
         kitchenService.save(toModel(kitchenDTO));
     }
     @PutMapping("/{id}")
     public ResponseEntity<Kitchen> update(@RequestBody KitchenDTO kitchenDTO, @PathVariable Long id){
        var updatedKitchen = kitchenService.update(toModel(kitchenDTO), id);
-        return optionalReturnUtils.getResponseOrNotFoundStatusWithNoContent(updatedKitchen);
+        return optionalReturnUtils.getResponseOrBadRequestStatusForCreated(updatedKitchen);
     }
 
     @DeleteMapping("/{id}")

@@ -2,7 +2,6 @@ package com.foodapi.foodapi.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.extern.java.Log;
 
 @Entity
 @Data
