@@ -1,10 +1,7 @@
 package com.foodapi.foodapi.model.Embedded;
 
 import com.foodapi.foodapi.model.City;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
@@ -21,7 +18,7 @@ public class RestaurantAddress {
     @Column(name = "address_district")
     private String district;
     @JoinColumn(name = "address_city")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private City city;
 
 }
