@@ -8,6 +8,7 @@ INSERT INTO Payment_Type (description) VALUES ('Pix')
 
 INSERT INTO Permission (name, description) VALUES ('Permissão teste', 'Descrição teste')
 INSERT INTO Permission (name, description) VALUES ('Permissão teste 2', 'Descrição teste 2')
+INSERT INTO Permission (name, description) VALUES ('Permissão teste 3', 'Descrição teste 3')
 
 INSERT INTO State (name) VALUES ('CE')
 
@@ -23,5 +24,10 @@ INSERT INTO Product(name, description, price, active, restaurant_id) VALUES ('pr
 INSERT INTO Product(name, description, price, active, restaurant_id) VALUES ('produto teste 3', 'descrição teste 3', 20.00, true, 3)
 INSERT INTO Product(name, description, price, active, restaurant_id) VALUES ('produto teste 4', 'descrição teste 4', 10.00, true, 2)
 
+INSERT INTO Group_Permissions (name) VALUES ('Grupo 1')
+INSERT INTO Group_Permissions (name) VALUES ('Grupo 2')
+INSERT INTO Group_Permissions (name) VALUES ('Grupo 3')
+
 INSERT INTO restaurant_payment_type (restaurant_id, payment_type_id) VALUES (1,1), (1,2), (1,3), (2,3), (3,2)
 INSERT INTO RESTAURANT_PRODUCTS (products_id, restaurant_id) VALUES (1,1), (2,2), (3,3), (4,3)
+INSERT INTO GROUP_PERMISSIONS_TB (GROUP_ID, PERMISSION_ID) VALUES (1,1), (2,2), (3,3), (1,1), (2,2), (3,3)
