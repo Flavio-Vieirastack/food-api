@@ -28,6 +28,11 @@ INSERT INTO Group_Permissions (name) VALUES ('Grupo 1')
 INSERT INTO Group_Permissions (name) VALUES ('Grupo 2')
 INSERT INTO Group_Permissions (name) VALUES ('Grupo 3')
 
+INSERT INTO User_Client (name, email, password, created_at) VALUES ('Nome 1', 'email@email.com', '123', CURDATE())
+INSERT INTO User_Client (name, email, password, created_at) VALUES ('Nome 2', 'email@email2.com', '123', CURDATE())
+INSERT INTO User_Client (name, email, password, created_at) VALUES ('Nome 3', 'email@email3.com', '123', CURDATE())
+
 INSERT INTO restaurant_payment_type (restaurant_id, payment_type_id) VALUES (1,1), (1,2), (1,3), (2,3), (3,2)
 INSERT INTO RESTAURANT_PRODUCTS (products_id, restaurant_id) VALUES (1,1), (2,2), (3,3), (4,3)
 INSERT INTO GROUP_PERMISSIONS_TB (GROUP_ID, PERMISSION_ID) VALUES (1,1), (2,2), (3,3), (1,1), (2,2), (3,3)
+INSERT INTO USER_GROUP_TB (GROUP_ID, USER_ID) VALUES (1,1), (2,2), (3,3), (1,1), (2,2), (3,3)
