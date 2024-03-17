@@ -21,7 +21,7 @@ INSERT INTO Restaurant (name, delivery_tax, kitchen_id, address_zip_code, addres
 
 INSERT INTO Product(name, description, price, active, restaurant_id) VALUES ('produto teste 1', 'descrição teste 1', 100.00, true, 1)
 INSERT INTO Product(name, description, price, active, restaurant_id) VALUES ('produto teste 2', 'descrição teste 2', 50.00, true, 2)
-INSERT INTO Product(name, description, price, active, restaurant_id) VALUES ('produto teste 3', 'descrição teste 3', 20.00, true, 3)
+INSERT INTO Product(name, description, price, active, restaurant_id) VALUES ('produto teste 3', 'descrição teste 3', 20.00, false, 3)
 INSERT INTO Product(name, description, price, active, restaurant_id) VALUES ('produto teste 4', 'descrição teste 4', 10.00, true, 2)
 
 INSERT INTO Group_Permissions (name) VALUES ('Grupo 1')

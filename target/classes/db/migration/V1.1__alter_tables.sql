@@ -1,0 +1,12 @@
+alter table if exists city add constraint city_constraint foreign key (state_id) references state;
+alter table if exists group_permissions_tb add constraint group_permissions_tb_permission_constraint foreign key (permission_id) references permission;
+alter table if exists group_permissions_tb add constraint group_permissions_tb_group_constraint foreign key (group_id) references group_permissions;
+alter table if exists product add constraint product_constraint foreign key (restaurant_id) references restaurant;
+alter table if exists restaurant add constraint restaurant_kitchen_constraint foreign key (kitchen_id) references kitchen;
+alter table if exists restaurant add constraint restaurant_address_city_constraint foreign key (address_city) references city;
+alter table if exists restaurant_payment_type add constraint restaurant_payment_type_constraint foreign key (payment_type_id) references payment_type;
+alter table if exists restaurant_payment_type add constraint restaurant_payment_type_restaurant_constraint foreign key (restaurant_id) references restaurant;
+alter table if exists restaurant_products add constraint restaurant_products_constraint foreign key (products_id) references product;
+alter table if exists restaurant_products add constraint restaurant_products_restaurant_constraint foreign key (restaurant_id) references restaurant;
+alter table if exists user_group_tb add constraint user_group_tb_group_constraint foreign key (group_id) references group_permissions;
+alter table if exists user_group_tb add constraint user_group_tb_user_constraint foreign key (user_id) references user_client;
