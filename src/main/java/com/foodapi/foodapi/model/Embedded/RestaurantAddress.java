@@ -23,4 +23,5 @@ public class RestaurantAddress {
     @JoinColumn(name = "address_city")
     @ManyToOne
     private City city;
+
 }

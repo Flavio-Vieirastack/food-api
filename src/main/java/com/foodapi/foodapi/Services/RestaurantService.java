@@ -72,16 +72,19 @@ public class RestaurantService {
         if (restaurant.getDeliveryTax() != null) {
             BeanUtils.copyProperties(
                     restaurant, restaurantInDB,
-                    "id", "kitchen", "name", "paymentTypes");
+                    "id", "kitchen", "name", "paymentTypes",
+                    "restaurantAddress", "createdAt");
         } else if (restaurant.getName() != null) {
             BeanUtils.copyProperties(
                     restaurant, restaurantInDB,
-                    "id", "kitchen", "deliveryTax", "paymentTypes");
+                    "id", "kitchen", "deliveryTax",
+                    "paymentTypes", "restaurantAddress", "createdAt");
 
         } else {
             BeanUtils.copyProperties(
                     restaurant, restaurantInDB,
-                    "id", "kitchen", "paymentTypes");
+                    "id", "kitchen", "paymentTypes",
+                    "restaurantAddress", "createdAt");
 
         }
 

@@ -4,8 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.foodapi.foodapi.model.Embedded.RestaurantAddress;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +23,6 @@ public class Restaurant {
     private BigDecimal deliveryTax;
     @ManyToOne
     private Kitchen kitchen; //Muitos restaurantes tem uma cozinha
-
     @ManyToMany
     @JoinTable(name = "restaurant_payment_type",
             joinColumns = @JoinColumn(name = "restaurant_id"),
@@ -28,7 +30,15 @@ public class Restaurant {
     )
     @JsonIgnore
     private List<PaymentType> paymentTypes = new ArrayList<>();
-
     @Embedded
+    @JsonIgnore
     private RestaurantAddress restaurantAddress;
+    @CreationTimestamp
+    @Column(columnDefinition = "datetime")
+    private LocalDateTime createdAt;
+    @UpdateTimestamp
+    @Column(columnDefinition = "datetime")
+    private LocalDateTime updatedAt;
+    @OneToMany
+    private List<Product> products = new ArrayList<>();
 }
