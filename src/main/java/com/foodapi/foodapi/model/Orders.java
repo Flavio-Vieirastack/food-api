@@ -7,7 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -31,9 +31,9 @@ public class Orders {
     @Enumerated
     private OrderStatus orderStatus;
     @OneToMany
-    private List<PaymentType> paymentType;
+    private List<PaymentType> paymentType = new ArrayList<>();
     @OneToMany
-    private List<OrderItem> orderItem;
+    private List<OrderItem> orderItem = new ArrayList<>();
 
     @ManyToOne
     private Restaurant restaurant;

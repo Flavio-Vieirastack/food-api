@@ -1,5 +1,7 @@
 package com.foodapi.foodapi.Services;
 
+import com.foodapi.foodapi.exceptions.EntityConflictException;
+import com.foodapi.foodapi.exceptions.EntityNotFoundException;
 import com.foodapi.foodapi.model.Restaurant;
 import com.foodapi.foodapi.repository.KitchenRepository;
 import com.foodapi.foodapi.repository.RestaurantRepository;
@@ -7,6 +9,8 @@ import jakarta.transaction.Transactional;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,6 +29,8 @@ public class RestaurantService {
     }
 
     public Optional<Restaurant> getOne(Long id) {
+        searchOrNotFound(id);
+
         return restaurantRepository.findById(id);
     }
 
@@ -46,6 +52,7 @@ public class RestaurantService {
 
     @Transactional
     public Optional<Restaurant> update(Restaurant restaurant, Long id) {
+        searchOrNotFound(id);
         var restaurantInDB = getOne(id);
         if (restaurantInDB.isPresent()) {
             try {
@@ -58,15 +65,19 @@ public class RestaurantService {
         }
         return Optional.empty();
     }
+
     @Transactional
     public void delete(Long id) {
+        searchOrNotFound(id);
         try {
             restaurantRepository.deleteById(id);
-        } catch (Exception ex) {
-            // Adicionar erro
-            System.out.println(ex.getCause().toString());
+        } catch (EmptyResultDataAccessException ex) {
+            throw new EntityNotFoundException(ex.getMessage());
+        } catch (DataIntegrityViolationException ex) {
+            throw new EntityConflictException(ex.getMessage());
         }
     }
+
     // Remover quando houver melhor forma de tratar
     private void copyPropertiesIfNull(@NotNull Restaurant restaurant, Restaurant restaurantInDB) {
         if (restaurant.getDeliveryTax() != null) {
@@ -88,5 +99,10 @@ public class RestaurantService {
 
         }
 
+    }
+
+    private void searchOrNotFound(Long id) {
+        restaurantRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Resource not found")
+        );
     }
 }

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -21,5 +22,5 @@ public class OrderItem {
     @ManyToOne(fetch = FetchType.LAZY)
     private Orders orders;
     @OneToMany
-    private List<Product> productList;
+    private List<Product> productList = new ArrayList<>();
 }

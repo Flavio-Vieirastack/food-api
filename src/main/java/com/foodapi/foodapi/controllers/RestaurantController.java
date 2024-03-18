@@ -5,6 +5,7 @@ import com.foodapi.foodapi.DTO.RestaurantUpdateDTO;
 import com.foodapi.foodapi.Services.RestaurantService;
 import com.foodapi.foodapi.core.utils.ApiObjectMapper;
 import com.foodapi.foodapi.core.utils.OptionalReturnUtils;
+import com.foodapi.foodapi.exceptions.EntityNotFoundException;
 import com.foodapi.foodapi.model.Kitchen;
 import com.foodapi.foodapi.model.Restaurant;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +68,7 @@ public class RestaurantController {
 
     @DeleteMapping("{id}")
     public ResponseEntity<Restaurant> delete(@PathVariable Long id) {
-        restaurantService.delete(id);
-        return ResponseEntity.ok().build();
+       restaurantService.delete(id);
+       return ResponseEntity.ok().build();
     }
 }
