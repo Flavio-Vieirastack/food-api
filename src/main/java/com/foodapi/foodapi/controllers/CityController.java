@@ -6,6 +6,7 @@ import com.foodapi.foodapi.core.utils.ApiObjectMapper;
 import com.foodapi.foodapi.core.utils.OptionalReturnUtils;
 import com.foodapi.foodapi.model.City;
 import com.foodapi.foodapi.model.State;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -54,7 +55,7 @@ public class CityController {
         return optionalReturnUtils.getResponseOrNotFoundStatusWithNoContent(deletedCity);
     }
 
-    private City toModel(CityDTO cityDTO) {
+    private @NotNull City toModel(CityDTO cityDTO) {
         var cityModel = apiObjectMapper.dtoToModel(cityDTO, City.class);
         var state = new State();
         state.setId(cityDTO.stateID());

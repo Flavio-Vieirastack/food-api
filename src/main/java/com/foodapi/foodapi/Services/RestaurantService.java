@@ -1,6 +1,6 @@
 package com.foodapi.foodapi.Services;
 
-import com.foodapi.foodapi.exceptions.EntityConflictException;
+import com.foodapi.foodapi.core.utils.ServiceCallsExceptionHandler;
 import com.foodapi.foodapi.exceptions.EntityNotFoundException;
 import com.foodapi.foodapi.model.Restaurant;
 import com.foodapi.foodapi.repository.KitchenRepository;
@@ -9,8 +9,6 @@ import jakarta.transaction.Transactional;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,13 +22,17 @@ public class RestaurantService {
     @Autowired
     private KitchenRepository kitchenRepository;
 
+    @Autowired
+    private ServiceCallsExceptionHandler serviceCallsExceptionHandler;
+
+
     public List<Restaurant> getAll() {
+
         return restaurantRepository.findAll();
     }
 
     public Optional<Restaurant> getOne(Long id) {
         searchOrNotFound(id);
-
         return restaurantRepository.findById(id);
     }
 
@@ -66,16 +68,10 @@ public class RestaurantService {
         return Optional.empty();
     }
 
-    @Transactional
     public void delete(Long id) {
         searchOrNotFound(id);
-        try {
-            restaurantRepository.deleteById(id);
-        } catch (EmptyResultDataAccessException ex) {
-            throw new EntityNotFoundException(ex.getMessage());
-        } catch (DataIntegrityViolationException ex) {
-            throw new EntityConflictException(ex.getMessage());
-        }
+        serviceCallsExceptionHandler.executeOrThrowErrors(
+                () -> restaurantRepository.deleteById(id));
     }
 
     // Remover quando houver melhor forma de tratar
