@@ -26,3 +26,5 @@ public class UserClient {
     )
     private List<GroupPermissions> groupPermissions;
 }
+
+//parei em 07.10
