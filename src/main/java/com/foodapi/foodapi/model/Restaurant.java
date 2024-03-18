@@ -1,7 +1,7 @@
 package com.foodapi.foodapi.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.foodapi.foodapi.model.Embedded.RestaurantAddress;
+import com.foodapi.foodapi.model.Embedded.Address;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -32,7 +32,7 @@ public class Restaurant {
     private List<PaymentType> paymentTypes = new ArrayList<>();
     @Embedded
     @JsonIgnore
-    private RestaurantAddress restaurantAddress;
+    private Address address;
     @CreationTimestamp
     @Column(columnDefinition = "datetime")
     private LocalDateTime createdAt;

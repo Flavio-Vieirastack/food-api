@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @Embeddable
-public class RestaurantAddress {
+public class Address {
     @Column(name = "address_zip_code")
     private String zipCode;
     @Column(name = "address_public_place")
