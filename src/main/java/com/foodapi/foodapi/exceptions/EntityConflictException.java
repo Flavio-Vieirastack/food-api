@@ -1,5 +1,6 @@
 package com.foodapi.foodapi.exceptions;
 
+import lombok.EqualsAndHashCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
