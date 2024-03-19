@@ -46,12 +46,8 @@ public class KitchenController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Kitchen> delete(@PathVariable Long id) {
-        try {
-            var deletedKitchen = kitchenService.delete(id);
-            return optionalReturnUtils.getResponseOrNotFoundStatusWithNoContent(deletedKitchen);
-        } catch(DataIntegrityViolationException ex) {
-           return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
+            kitchenService.delete(id);
+            return ResponseEntity.ok().build();
     }
 
     @GetMapping("/search")

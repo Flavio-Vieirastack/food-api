@@ -21,7 +21,7 @@ public class Restaurant {
     private String name;
     @Column(name = "delivery_tax")
     private BigDecimal deliveryTax;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private Kitchen kitchen; //Muitos restaurantes tem uma cozinha
     @ManyToMany
     @JoinTable(name = "restaurant_payment_type",

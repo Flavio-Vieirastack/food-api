@@ -32,8 +32,7 @@ public class RestaurantService {
     }
 
     public Optional<Restaurant> getOne(Long id) {
-        searchOrNotFound(id);
-        return restaurantRepository.findById(id);
+       return searchOrNotFound(id);
     }
 
     @Transactional
@@ -54,8 +53,7 @@ public class RestaurantService {
 
     @Transactional
     public Optional<Restaurant> update(Restaurant restaurant, Long id) {
-        searchOrNotFound(id);
-        var restaurantInDB = getOne(id);
+        var restaurantInDB = searchOrNotFound(id);
         if (restaurantInDB.isPresent()) {
             try {
                 copyPropertiesIfNull(restaurant, restaurantInDB.get());
@@ -97,8 +95,10 @@ public class RestaurantService {
 
     }
 
-    private void searchOrNotFound(Long id) {
-        restaurantRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Resource not found")
+    private @NotNull Optional<Restaurant> searchOrNotFound(Long id) {
+       var result = restaurantRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Resource not found")
         );
+       return Optional.of(result);
     }
 }

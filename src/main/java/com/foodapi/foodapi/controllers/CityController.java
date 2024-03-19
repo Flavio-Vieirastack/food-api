@@ -51,8 +51,8 @@ public class CityController {
 
     @DeleteMapping("{id}")
     public ResponseEntity<City> delete(@PathVariable Long id) {
-        var deletedCity = cityService.delete(id);
-        return optionalReturnUtils.getResponseOrNotFoundStatusWithNoContent(deletedCity);
+        cityService.delete(id);
+        return ResponseEntity.ok().build();
     }
 
     private @NotNull City toModel(CityDTO cityDTO) {
