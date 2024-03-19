@@ -51,7 +51,7 @@ public class StateController {
 
     @DeleteMapping("{id}")
     public ResponseEntity<State> delete(@PathVariable Long id) {
-        var deletedState = stateService.delete(id);
-        return optionalReturnUtils.getResponseOrNotFoundStatusWithNoContent(deletedState);
+        stateService.delete(id);
+        return ResponseEntity.ok().build();
     }
 }
