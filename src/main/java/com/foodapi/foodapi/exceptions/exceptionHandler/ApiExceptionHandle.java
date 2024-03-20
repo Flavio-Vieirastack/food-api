@@ -1,5 +1,7 @@
 package com.foodapi.foodapi.exceptions.exceptionHandler;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.foodapi.foodapi.exceptions.BadRequestException;
 import com.foodapi.foodapi.exceptions.EntityConflictException;
 import com.foodapi.foodapi.exceptions.EntityNotFoundException;
@@ -11,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -18,6 +21,8 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class ApiExceptionHandle extends ResponseEntityExceptionHandler {
@@ -29,8 +34,31 @@ public class ApiExceptionHandle extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         //para habilitar você precisa ir no properties e adicionar
         //spring.mvc.throw-exception-if-no-handler-found=true
-       var body = buildExceptionBody(ex, status).build();
+        var body = buildExceptionBody(ex, status).build();
         return handleExceptionInternal(ex, body, headers, status, request);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+            @NotNull MethodArgumentNotValidException ex,
+            @NotNull HttpHeaders headers,
+            @NotNull HttpStatusCode status,
+            @NotNull WebRequest request) {
+        //Esse metodo faz a formatação da mensagem de erro do bean validation
+        String field = Objects.requireNonNull(ex.getBindingResult().getFieldError()).getField();
+        String defaultMessage = ex.getBindingResult().getFieldError().getDefaultMessage();
+        String errorMessage = defaultMessage != null ? defaultMessage : "invalid";
+
+        String errorMessageDetail = String.format("%s %s", field, errorMessage);
+
+        ExceptionBody exceptionBody = buildExceptionBody(ex, status)
+                .type("https://api-prod.com.br/not-valid-body")
+                .title("Invalid request body")
+                .details(errorMessageDetail)
+                .build();
+
+        // Retorna a resposta de erro
+        return handleExceptionInternal(ex, exceptionBody, headers, status, request);
     }
 
     @Override
@@ -38,7 +66,11 @@ public class ApiExceptionHandle extends ResponseEntityExceptionHandler {
             @NotNull Exception ex, Object body, @NotNull HttpHeaders headers,
             @NotNull HttpStatusCode statusCode, @NotNull WebRequest request
     ) {
-        body = buildExceptionBody(ex, statusCode).build();
+        if (body == null) {
+            body = buildExceptionBody(ex, statusCode).build();
+        } else if (body instanceof String) {
+            body = buildExceptionBody(ex, statusCode).build();
+        }
         return super.handleExceptionInternal(ex, body, headers, statusCode, request);
     }
 
@@ -48,6 +80,24 @@ public class ApiExceptionHandle extends ResponseEntityExceptionHandler {
             @NotNull HttpHeaders headers,
             @NotNull HttpStatusCode status,
             @NotNull WebRequest request) {
+        Throwable rootCause = ExceptionUtils.getRootCause(ex);
+        if (rootCause instanceof InvalidFormatException) {
+            var field = ((InvalidFormatException) rootCause)
+                    .getPath().stream().map(
+                            JsonMappingException.Reference::getFieldName)
+                    .collect(Collectors.joining("."));
+            var title = String.format(
+                    "The property '%s' has value '%s' as invalid type, please type a value of '%s'", field,
+                    ((InvalidFormatException) rootCause).getValue(),
+                    ((InvalidFormatException) rootCause).getTargetType().getSimpleName()
+            );
+            var body = buildExceptionBody(ex, status).title(title)
+                    .type("https://api-prod.com.br/not-valid-body")
+                    .build();
+            return handleExceptionInternal(
+                    ex, body, headers, status, request
+            );
+        }
         var body = buildExceptionBody(ex, status).build();
         return handleExceptionInternal(
                 ex, body, headers, status, request);
@@ -62,6 +112,7 @@ public class ApiExceptionHandle extends ResponseEntityExceptionHandler {
                 ex, exceptionBody, new HttpHeaders(), HttpStatus.NOT_FOUND, request
         );
     }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> allExceptions(
             @NotNull Exception ex, WebRequest request) {
@@ -101,7 +152,7 @@ public class ApiExceptionHandle extends ResponseEntityExceptionHandler {
 //			<artifactId>commons-lang3</artifactId>
 //			<version>3.14.0</version>
 //		</dependency>
-        String message = ExceptionUtils.getRootCause(ex).getLocalizedMessage();
+        String message = ExceptionUtils.getRootCauseMessage(ex);
         String uriBodyMessage = message.replace(" ", "-");
         var exceptionBody = ExceptionBody.builder();
         if (ex.getCause() != null) {
