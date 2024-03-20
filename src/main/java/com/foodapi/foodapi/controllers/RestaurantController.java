@@ -65,7 +65,7 @@ public class RestaurantController {
         }
         var restaurantUpdateResponse = restaurantService.update(
                 restaurantModel, id);
-            return optionalReturnUtils.getResponseOrBadRequestStatusForOk(restaurantUpdateResponse);
+            return ResponseEntity.ok(restaurantUpdateResponse);
     }
 
     @DeleteMapping("{id}")

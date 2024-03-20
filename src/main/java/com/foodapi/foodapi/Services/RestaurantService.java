@@ -1,6 +1,8 @@
 package com.foodapi.foodapi.Services;
 
+import com.foodapi.foodapi.core.utils.ApiObjectMapper;
 import com.foodapi.foodapi.core.utils.ServiceCallsExceptionHandler;
+import com.foodapi.foodapi.exceptions.BadRequestException;
 import com.foodapi.foodapi.exceptions.EntityNotFoundException;
 import com.foodapi.foodapi.model.Restaurant;
 import com.foodapi.foodapi.repository.KitchenRepository;
@@ -10,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpServerErrorException;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +26,9 @@ public class RestaurantService {
     private KitchenRepository kitchenRepository;
 
     @Autowired
+    private ApiObjectMapper<Restaurant> apiObjectMapper;
+
+    @Autowired
     private ServiceCallsExceptionHandler serviceCallsExceptionHandler;
 
 
@@ -32,7 +38,7 @@ public class RestaurantService {
     }
 
     public Restaurant getOne(Long id) {
-       return searchOrNotFound(id);
+        return searchOrNotFound(id);
     }
 
     @Transactional
@@ -52,21 +58,22 @@ public class RestaurantService {
     }
 
     @Transactional
-    public Optional<Restaurant> update(@NotNull Restaurant restaurant, Long id) {
+    public Restaurant update(@NotNull Restaurant restaurant, Long id) {
         var restaurantInDB = searchOrNotFound(id);
-        var kitchen = restaurant.getKitchen();
-        if(kitchen != null) {
-            var newKitchen = kitchenRepository.findById(kitchen.getId());
-            newKitchen.ifPresent(restaurantInDB::setKitchen);
-        }
-            try {
-                copyPropertiesIfNull(restaurant, restaurantInDB);
-                return Optional.of(restaurantRepository.save(restaurantInDB));
-            } catch (Exception ex) {
-                // Adicionar erro
-                System.out.println(ex.getCause().toString());
+        try {
+            var newRestaurant = apiObjectMapper.modelToUpdatedModel(
+                    restaurant,
+                    restaurantInDB
+            );
+            var kitchen = restaurant.getKitchen();
+            if (kitchen != null) {
+                var newKitchen = kitchenRepository.findById(kitchen.getId());
+                newKitchen.ifPresent(newRestaurant::setKitchen);
             }
-        return Optional.empty();
+            return newRestaurant;
+        } catch (Exception ex) {
+            throw new BadRequestException("One or more fields are not compatible");
+        }
     }
 
     public void delete(Long id) {
@@ -75,31 +82,8 @@ public class RestaurantService {
                 () -> restaurantRepository.deleteById(id));
     }
 
-    // Remover quando houver melhor forma de tratar
-    private void copyPropertiesIfNull(@NotNull Restaurant restaurant, Restaurant restaurantInDB) {
-        if (restaurant.getDeliveryTax() != null) {
-            BeanUtils.copyProperties(
-                    restaurant, restaurantInDB,
-                    "id", "kitchen", "name", "paymentTypes",
-                    "restaurantAddress", "createdAt");
-        } else if (restaurant.getName() != null) {
-            BeanUtils.copyProperties(
-                    restaurant, restaurantInDB,
-                    "id", "kitchen", "deliveryTax",
-                    "paymentTypes", "restaurantAddress", "createdAt");
-
-        } else {
-            BeanUtils.copyProperties(
-                    restaurant, restaurantInDB,
-                    "id", "kitchen", "paymentTypes",
-                    "restaurantAddress", "createdAt");
-
-        }
-
-    }
-
     private @NotNull Restaurant searchOrNotFound(Long id) {
-       return restaurantRepository.findById(id).orElseThrow(
+        return restaurantRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Resource not found")
         );
     }
