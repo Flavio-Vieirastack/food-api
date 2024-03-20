@@ -8,6 +8,7 @@ import com.foodapi.foodapi.exceptions.EntityNotFoundException;
 import com.foodapi.foodapi.exceptions.exceptionBody.ExceptionBody;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -144,6 +145,17 @@ public class ApiExceptionHandle extends ResponseEntityExceptionHandler {
                 ex, HttpStatus.CONFLICT).build();
         return handleExceptionInternal(
                 ex, exceptionBody, new HttpHeaders(), HttpStatus.CONFLICT, request
+        );
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<?> dataIntegrity(
+            @NotNull DataIntegrityViolationException ex, WebRequest request) {
+        var exceptionBody = buildExceptionBody(
+                ex, HttpStatus.BAD_REQUEST )
+                .title("The body of your request is empty or invalid").build();
+        return handleExceptionInternal(
+                ex, exceptionBody, new HttpHeaders(), HttpStatus.BAD_REQUEST, request
         );
     }
 

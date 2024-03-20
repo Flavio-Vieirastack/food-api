@@ -12,6 +12,7 @@ public class GroupPermissions {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false)
     private String name;
     @ManyToMany
     @JoinTable(name = "group_permissions_tb",

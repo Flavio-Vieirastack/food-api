@@ -14,9 +14,13 @@ public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false)
     private Integer quantity;
+    @Column(nullable = false)
     private BigDecimal unitaryPrice;
+    @Column(nullable = false)
     private BigDecimal totalPrice;
+    @Column(nullable = false)
     private String observation;
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)

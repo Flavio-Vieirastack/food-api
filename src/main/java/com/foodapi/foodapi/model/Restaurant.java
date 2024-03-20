@@ -18,8 +18,9 @@ public class Restaurant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false)
     private String name;
-    @Column(name = "delivery_tax")
+    @Column(name = "delivery_tax", nullable = false)
     private BigDecimal deliveryTax;
     @ManyToOne
     private Kitchen kitchen; //Muitos restaurantes tem uma cozinha

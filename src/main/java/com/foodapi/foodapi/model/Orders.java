@@ -16,8 +16,11 @@ public class Orders {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false)
     private BigDecimal subTotal;
+    @Column(nullable = false)
     private BigDecimal deliveryTax;
+    @Column(nullable = false)
     private BigDecimal totalValue;
     @CreationTimestamp
     private LocalDateTime creationDate;

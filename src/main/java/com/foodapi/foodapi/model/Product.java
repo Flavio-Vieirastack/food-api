@@ -12,10 +12,14 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false)
     private String name;
+    @Column(nullable = false)
     private String description;
+    @Column(nullable = false)
     private BigDecimal price;
-    private boolean active;
+    @Column(nullable = false)
+    private boolean active = true;
     @ManyToOne
     @JsonIgnore
     private Restaurant restaurant;
