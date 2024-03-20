@@ -45,7 +45,7 @@ public class ApiExceptionHandle extends ResponseEntityExceptionHandler {
             @NotNull HttpHeaders headers,
             @NotNull HttpStatusCode status,
             @NotNull WebRequest request) {
-        //Esse metodo faz a formatação da mensagem de erro do bean validation
+        //Esse metodo faz a formatação das mensagens de erro do bean validation
         String field = Objects.requireNonNull(ex.getBindingResult().getFieldError()).getField();
         String defaultMessage = ex.getBindingResult().getFieldError().getDefaultMessage();
         String errorMessage = defaultMessage != null ? defaultMessage : "invalid";
@@ -122,7 +122,9 @@ public class ApiExceptionHandle extends ResponseEntityExceptionHandler {
     public ResponseEntity<?> allExceptions(
             @NotNull Exception ex, WebRequest request) {
         var exceptionBody = buildExceptionBody(
-                ex, HttpStatus.INTERNAL_SERVER_ERROR).build();
+                ex, HttpStatus.INTERNAL_SERVER_ERROR)
+                .title("System error please contact the admins")
+                .build();
         return handleExceptionInternal(
                 ex, exceptionBody, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request
         );

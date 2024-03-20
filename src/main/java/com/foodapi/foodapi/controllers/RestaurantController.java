@@ -5,7 +5,6 @@ import com.foodapi.foodapi.DTO.RestaurantUpdateDTO;
 import com.foodapi.foodapi.Services.RestaurantService;
 import com.foodapi.foodapi.core.utils.ApiObjectMapper;
 import com.foodapi.foodapi.core.utils.OptionalReturnUtils;
-import com.foodapi.foodapi.exceptions.EntityNotFoundException;
 import com.foodapi.foodapi.model.Kitchen;
 import com.foodapi.foodapi.model.Restaurant;
 import jakarta.validation.Valid;

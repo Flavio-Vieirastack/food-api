@@ -1,6 +1,8 @@
 package com.foodapi.foodapi.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.foodapi.foodapi.model.Embedded.Address;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -41,5 +43,6 @@ public class Restaurant {
     @Column(columnDefinition = "datetime")
     private LocalDateTime updatedAt;
     @OneToMany
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<Product> products = new ArrayList<>();
 }
