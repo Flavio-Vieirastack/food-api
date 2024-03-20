@@ -36,7 +36,7 @@ public class RestaurantController {
     @GetMapping("{id}")
     public ResponseEntity<Restaurant> getOne(@PathVariable Long id) {
         var restaurant = restaurantService.getOne(id);
-        return optionalReturnUtils.getResponseOrNotFoundStatusWithNoContent(restaurant);
+        return ResponseEntity.ok(restaurant);
     }
 
     @PostMapping
@@ -59,12 +59,14 @@ public class RestaurantController {
             @PathVariable Long id) {
         var restaurantModel = apiObjectMapper.dtoToModel(
                 restaurantUpdateDTO, Restaurant.class);
+        if(restaurantUpdateDTO.kitchenId() != null) {
+            var newKitchen = new Kitchen();
+            newKitchen.setId(restaurantUpdateDTO.kitchenId());
+            restaurantModel.setKitchen(newKitchen);
+        }
         var restaurantUpdateResponse = restaurantService.update(
                 restaurantModel, id);
-        if (restaurantUpdateResponse.isPresent()) {
             return optionalReturnUtils.getResponseOrBadRequestStatusForOk(restaurantUpdateResponse);
-        }
-        return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("{id}")

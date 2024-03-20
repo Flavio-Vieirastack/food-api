@@ -31,7 +31,7 @@ public class RestaurantService {
         return restaurantRepository.findAll();
     }
 
-    public Optional<Restaurant> getOne(Long id) {
+    public Restaurant getOne(Long id) {
        return searchOrNotFound(id);
     }
 
@@ -52,17 +52,20 @@ public class RestaurantService {
     }
 
     @Transactional
-    public Optional<Restaurant> update(Restaurant restaurant, Long id) {
+    public Optional<Restaurant> update(@NotNull Restaurant restaurant, Long id) {
         var restaurantInDB = searchOrNotFound(id);
-        if (restaurantInDB.isPresent()) {
+        var kitchen = restaurant.getKitchen();
+        if(kitchen != null) {
+            var newKitchen = kitchenRepository.findById(kitchen.getId());
+            newKitchen.ifPresent(restaurantInDB::setKitchen);
+        }
             try {
-                copyPropertiesIfNull(restaurant, restaurantInDB.get());
-                return Optional.of(restaurantRepository.save(restaurantInDB.get()));
+                copyPropertiesIfNull(restaurant, restaurantInDB);
+                return Optional.of(restaurantRepository.save(restaurantInDB));
             } catch (Exception ex) {
                 // Adicionar erro
                 System.out.println(ex.getCause().toString());
             }
-        }
         return Optional.empty();
     }
 
@@ -95,10 +98,9 @@ public class RestaurantService {
 
     }
 
-    private @NotNull Optional<Restaurant> searchOrNotFound(Long id) {
-       var result = restaurantRepository.findById(id).orElseThrow(
+    private @NotNull Restaurant searchOrNotFound(Long id) {
+       return restaurantRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Resource not found")
         );
-       return Optional.of(result);
     }
 }
