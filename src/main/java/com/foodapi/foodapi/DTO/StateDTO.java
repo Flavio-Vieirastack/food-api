@@ -1,4 +1,6 @@
 package com.foodapi.foodapi.DTO;
 
-public record StateDTO(String name) {
+import jakarta.validation.constraints.NotBlank;
+
+public record StateDTO(@NotBlank String name) {
 }

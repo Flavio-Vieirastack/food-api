@@ -6,6 +6,7 @@ import com.foodapi.foodapi.core.utils.ApiObjectMapper;
 import com.foodapi.foodapi.core.utils.OptionalReturnUtils;
 import com.foodapi.foodapi.model.City;
 import com.foodapi.foodapi.model.State;
+import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +38,7 @@ public class CityController {
     }
 
     @PostMapping
-    public ResponseEntity<City> create(@RequestBody CityDTO cityDTO) {
+    public ResponseEntity<City> create(@Valid @RequestBody CityDTO cityDTO) {
         var createdCity = cityService.create(toModel(cityDTO));
         return optionalReturnUtils.getResponseOrBadRequestStatusForCreated(createdCity);
     }

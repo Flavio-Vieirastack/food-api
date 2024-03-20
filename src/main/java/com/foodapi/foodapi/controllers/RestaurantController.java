@@ -8,6 +8,7 @@ import com.foodapi.foodapi.core.utils.OptionalReturnUtils;
 import com.foodapi.foodapi.exceptions.EntityNotFoundException;
 import com.foodapi.foodapi.model.Kitchen;
 import com.foodapi.foodapi.model.Restaurant;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,7 +40,7 @@ public class RestaurantController {
     }
 
     @PostMapping
-    public ResponseEntity<Restaurant> save(@RequestBody RestaurantDTO restaurantDTO) {
+    public ResponseEntity<Restaurant> save(@Valid @RequestBody RestaurantDTO restaurantDTO) {
         var restaurantModel = apiObjectMapper.dtoToModel(
                 restaurantDTO, Restaurant.class);
         var kitchen = new Kitchen();

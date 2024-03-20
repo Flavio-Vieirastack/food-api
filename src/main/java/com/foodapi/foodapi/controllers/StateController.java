@@ -5,6 +5,7 @@ import com.foodapi.foodapi.Services.StateService;
 import com.foodapi.foodapi.core.utils.ApiObjectMapper;
 import com.foodapi.foodapi.core.utils.OptionalReturnUtils;
 import com.foodapi.foodapi.model.State;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +29,7 @@ public class StateController {
     }
 
     @PostMapping
-    public ResponseEntity<State> save(@RequestBody StateDTO stateDTO) {
+    public ResponseEntity<State> save(@Valid @RequestBody StateDTO stateDTO) {
         var createdState = stateService.save(
                 apiObjectMapper.dtoToModel(stateDTO, State.class));
         return optionalReturnUtils.getResponseOrBadRequestStatusForCreated(

@@ -5,6 +5,7 @@ import com.foodapi.foodapi.Services.KitchenService;
 import com.foodapi.foodapi.core.utils.ApiObjectMapper;
 import com.foodapi.foodapi.core.utils.OptionalReturnUtils;
 import com.foodapi.foodapi.model.Kitchen;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -35,7 +36,7 @@ public class KitchenController {
         return optionalReturnUtils.getResponseOrNotFoundStatusWithNoContent(kitchen);
     }
     @PostMapping
-    public void save(@RequestBody KitchenDTO kitchenDTO) {
+    public void save(@Valid @RequestBody KitchenDTO kitchenDTO) {
         kitchenService.save(toModel(kitchenDTO));
     }
     @PutMapping("/{id}")
