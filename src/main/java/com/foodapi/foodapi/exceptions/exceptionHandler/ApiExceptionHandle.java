@@ -21,6 +21,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -28,7 +29,6 @@ import java.util.stream.Collectors;
 public class ApiExceptionHandle extends ResponseEntityExceptionHandler {
     // Essa extensão serve para capturar todos os erros lançados pelo spring
     // E você pode dar override nesse metodo a baixo
-
 
     @Override
     protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
@@ -48,13 +48,17 @@ public class ApiExceptionHandle extends ResponseEntityExceptionHandler {
         String field = Objects.requireNonNull(ex.getBindingResult().getFieldError()).getField();
         String defaultMessage = ex.getBindingResult().getFieldError().getDefaultMessage();
         String errorMessage = defaultMessage != null ? defaultMessage : "invalid";
-
         String errorMessageDetail = String.format("%s %s", field, errorMessage);
-
+        var resultFields = ex.getBindingResult().getFieldErrors().stream().map(
+                fieldError -> ExceptionBody.FieldsErrors.builder()
+                        .name(fieldError.getField())
+                        .message(fieldError.getDefaultMessage()).build()).toList();
+        var fieldsErrors = new ArrayList<>(resultFields);
         ExceptionBody exceptionBody = buildExceptionBody(ex, status)
                 .type("https://api-prod.com.br/not-valid-body")
                 .title("Invalid request body")
                 .details(errorMessageDetail)
+                .fieldsErrors(fieldsErrors)
                 .build();
 
         // Retorna a resposta de erro

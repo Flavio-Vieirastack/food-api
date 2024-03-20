@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @Builder
@@ -14,4 +16,11 @@ public class ExceptionBody {
     private String details;
     private String type;
     private LocalDateTime date;
+    private List<FieldsErrors> fieldsErrors;
+    @Getter
+    @Builder
+    public static class FieldsErrors{
+        private String name;
+        private String message;
+    }
 }
