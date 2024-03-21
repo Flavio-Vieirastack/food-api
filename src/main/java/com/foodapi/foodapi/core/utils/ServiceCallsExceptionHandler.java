@@ -18,7 +18,7 @@ public class ServiceCallsExceptionHandler {
         } catch (EmptyResultDataAccessException ex) {
             throw new EntityNotFoundException(ex.getMessage());
         } catch (DataIntegrityViolationException ex) {
-            throw new EntityConflictException(ex.getMessage());
+            throw new EntityConflictException("Entity in use, impossible to delete");
         }
     }
 
@@ -29,7 +29,7 @@ public class ServiceCallsExceptionHandler {
         } catch (EmptyResultDataAccessException ex) {
             throw new EntityNotFoundException(ex.getMessage());
         } catch (DataIntegrityViolationException ex) {
-            throw new EntityConflictException(ex.getMessage());
+            throw new EntityConflictException("Entity in use, impossible to delete");
         }
     }
 

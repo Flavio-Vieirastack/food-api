@@ -30,11 +30,11 @@ public class StateController {
         var result = stateService.save(
                 apiObjectMapper.dtoToModel(stateDTO, State.class));
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
-
     }
 
     @GetMapping("{id}")
     public ResponseEntity<State> getOne(@PathVariable Long id) {
+
         return ResponseEntity.ok(stateService.getOne(id));
     }
 
