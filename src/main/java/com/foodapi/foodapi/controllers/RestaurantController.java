@@ -4,7 +4,6 @@ import com.foodapi.foodapi.DTO.RestaurantDTO;
 import com.foodapi.foodapi.DTO.RestaurantUpdateDTO;
 import com.foodapi.foodapi.Services.RestaurantService;
 import com.foodapi.foodapi.core.utils.ApiObjectMapper;
-import com.foodapi.foodapi.core.utils.OptionalReturnUtils;
 import com.foodapi.foodapi.model.Kitchen;
 import com.foodapi.foodapi.model.Restaurant;
 import jakarta.validation.Valid;
@@ -20,10 +19,6 @@ public class RestaurantController {
 
     @Autowired
     RestaurantService restaurantService;
-
-    @Autowired
-    OptionalReturnUtils<Restaurant> optionalReturnUtils;
-
     @Autowired
     ApiObjectMapper<Restaurant> apiObjectMapper;
 
@@ -47,8 +42,7 @@ public class RestaurantController {
         restaurantModel.setKitchen(kitchen);
         var createdRestaurant = restaurantService.save(
                 restaurantModel);
-        return optionalReturnUtils.getResponseOrBadRequestStatusForCreated(
-                createdRestaurant);
+       return ResponseEntity.ok(createdRestaurant);
 
     }
 

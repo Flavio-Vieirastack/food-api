@@ -1,5 +1,6 @@
 package com.foodapi.foodapi.Services;
 
+import com.foodapi.foodapi.core.utils.ApiObjectMapper;
 import com.foodapi.foodapi.core.utils.ServiceCallsExceptionHandler;
 import com.foodapi.foodapi.exceptions.EntityNotFoundException;
 import com.foodapi.foodapi.model.State;
@@ -19,53 +20,52 @@ public class StateService {
     private StateRepository stateRepository;
 
     @Autowired
+    private ApiObjectMapper<State> apiObjectMapper;
+
+    @Autowired
     private ServiceCallsExceptionHandler serviceCallsExceptionHandler;
 
     public List<State> getAll() {
         return stateRepository.findAll();
     }
 
-    public Optional<State> getOne(Long id) {
+    public State getOne(Long id) {
         return searchOrThrowErrors(id);
     }
 
     @Transactional
-    public Optional<State> save(State state) {
-        try {
-            return Optional.of(stateRepository.save(state));
-        } catch (Exception ex) {
-            System.out.println(ex.getCause().toString());
-            return Optional.empty();
-        }
+    public State save(State state) {
+        return stateRepository.save(state);
     }
 
     @Transactional
-    public Optional<State> update(State state, Long id) {
+    public State update(State state, Long id) {
         var stateInDb = searchOrThrowErrors(id);
-        if (stateInDb.isPresent()) {
-            try {
-                BeanUtils.copyProperties(state, stateInDb.get(), "id");
-                return Optional.of(stateRepository.save(stateInDb.get()));
-            } catch (Exception ex) {
-                System.out.println(ex.getCause().toString());
-                return Optional.empty();
-            }
-        }
-        return Optional.empty();
+        return serviceCallsExceptionHandler.executeOrThrowErrorsWithReturn(() -> {
+            var updatedState = apiObjectMapper.modelToUpdatedModel(state, stateInDb);
+            var result = stateRepository.save(updatedState);
+            stateRepository.flush();
+            //O flush serve para que essa função consiga capturar o erro
+            //mesmo com a anotação @Transactional
+            return result;
+        });
     }
 
+    @Transactional
     public void delete(Long id) {
-        var stateInDb = searchOrThrowErrors(id);
-        if (stateInDb.isPresent()) {
-            serviceCallsExceptionHandler.executeOrThrowErrors(
-                    () -> stateRepository.deleteById(id)
-            );
-        }
+        searchOrThrowErrors(id);
+        serviceCallsExceptionHandler.executeOrThrowErrors(
+                () -> {
+                    stateRepository.deleteById(id);
+                    //O flush serve para que essa função consiga capturar o erro
+                    //mesmo com a anotação @Transactional
+                    stateRepository.flush();
+                }
+        );
     }
 
-    private @NotNull Optional<State> searchOrThrowErrors(Long id) {
-        var result = stateRepository.findById(id).orElseThrow(
+    private @NotNull State searchOrThrowErrors(Long id) {
+        return stateRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Resource not found"));
-        return Optional.of(result);
     }
 }

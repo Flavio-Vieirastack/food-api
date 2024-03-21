@@ -3,12 +3,12 @@ package com.foodapi.foodapi.controllers;
 import com.foodapi.foodapi.DTO.CityDTO;
 import com.foodapi.foodapi.Services.CityService;
 import com.foodapi.foodapi.core.utils.ApiObjectMapper;
-import com.foodapi.foodapi.core.utils.OptionalReturnUtils;
 import com.foodapi.foodapi.model.City;
 import com.foodapi.foodapi.model.State;
 import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,8 +23,6 @@ public class CityController {
     @Autowired
     private ApiObjectMapper<City> apiObjectMapper;
 
-    @Autowired
-    private OptionalReturnUtils<City> optionalReturnUtils;
 
     @GetMapping
     public ResponseEntity<List<City>> getAll() {
@@ -34,20 +32,20 @@ public class CityController {
     @GetMapping("{id}")
     public ResponseEntity<City> getOne(@PathVariable Long id) {
         var city = cityService.geOne(id);
-        return optionalReturnUtils.getResponseOrNotFoundStatusWithNoContent(city);
+        return ResponseEntity.ok(city);
     }
 
     @PostMapping
     public ResponseEntity<City> create(@Valid @RequestBody CityDTO cityDTO) {
         var createdCity = cityService.create(toModel(cityDTO));
-        return optionalReturnUtils.getResponseOrBadRequestStatusForCreated(createdCity);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdCity);
     }
 
     @PutMapping("{id}")
     public ResponseEntity<City> update(
             @RequestBody CityDTO cityDTO, @PathVariable Long id) {
         var updatedCity = cityService.update(toModel(cityDTO), id);
-        return optionalReturnUtils.getResponseOrNotFoundStatusWithNoContent(updatedCity);
+        return ResponseEntity.status(HttpStatus.CREATED).body(updatedCity);
     }
 
     @DeleteMapping("{id}")

@@ -7,11 +7,10 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Field;
 
 @Component
 public class ServiceCallsExceptionHandler {
-    //Método só funciona em funções sem o @Transactional
+    //Funções com @Transactional precisam dar flush depois de executadas
     public void executeOrThrowErrors(@NotNull RepositoryFunction function) {
         try {
             function.execute();

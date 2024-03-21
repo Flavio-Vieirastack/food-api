@@ -3,11 +3,9 @@ package com.foodapi.foodapi.controllers;
 import com.foodapi.foodapi.DTO.KitchenDTO;
 import com.foodapi.foodapi.Services.KitchenService;
 import com.foodapi.foodapi.core.utils.ApiObjectMapper;
-import com.foodapi.foodapi.core.utils.OptionalReturnUtils;
 import com.foodapi.foodapi.model.Kitchen;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +20,6 @@ public class KitchenController {
     @Autowired
     private ApiObjectMapper<Kitchen> mapper;
 
-    @Autowired
-    private OptionalReturnUtils<Kitchen> optionalReturnUtils;
 
     @GetMapping
     public ResponseEntity<List<Kitchen>> getAll() {
@@ -33,16 +29,17 @@ public class KitchenController {
     @GetMapping("/{id}")
     public ResponseEntity<Kitchen> findOne(@PathVariable Long id) {
         var kitchen = kitchenService.getOne(id);
-        return optionalReturnUtils.getResponseOrNotFoundStatusWithNoContent(kitchen);
+        return ResponseEntity.ok(kitchen);
     }
     @PostMapping
     public void save(@Valid @RequestBody KitchenDTO kitchenDTO) {
+
         kitchenService.save(toModel(kitchenDTO));
     }
     @PutMapping("/{id}")
     public ResponseEntity<Kitchen> update(@RequestBody KitchenDTO kitchenDTO, @PathVariable Long id){
        var updatedKitchen = kitchenService.update(toModel(kitchenDTO), id);
-        return optionalReturnUtils.getResponseOrBadRequestStatusForCreated(updatedKitchen);
+        return ResponseEntity.status(HttpStatus.CREATED).body(updatedKitchen);
     }
 
     @DeleteMapping("/{id}")
@@ -57,7 +54,6 @@ public class KitchenController {
     }
 
     private Kitchen toModel(KitchenDTO kitchenDTO) {
-
         return mapper.dtoToModel(kitchenDTO, Kitchen.class);
     }
 }

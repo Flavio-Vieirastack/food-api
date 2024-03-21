@@ -1,17 +1,17 @@
 package com.foodapi.foodapi.Services;
 
+import com.foodapi.foodapi.core.utils.ApiObjectMapper;
 import com.foodapi.foodapi.core.utils.ServiceCallsExceptionHandler;
 import com.foodapi.foodapi.exceptions.EntityNotFoundException;
 import com.foodapi.foodapi.model.Kitchen;
 import com.foodapi.foodapi.repository.KitchenRepository;
 import jakarta.transaction.Transactional;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+
 @Service
 public class KitchenService {
     @Autowired
@@ -20,53 +20,50 @@ public class KitchenService {
     @Autowired
     private ServiceCallsExceptionHandler serviceCallsExceptionHandler;
 
+    @Autowired
+    private ApiObjectMapper<Kitchen> apiObjectMapper;
+
     public List<Kitchen> getAll() {
         return kitchenRepository.findAll();
     }
 
-    public Optional<Kitchen> getOne(Long id) {
-       return searchOrThrowError(id);
+    public Kitchen getOne(Long id) {
+        return searchOrThrowError(id);
     }
 
     public List<Kitchen> findByName(String name) {
-
         return kitchenRepository.findByNameContaining(name);
     }
 
     @Transactional
     public void save(Kitchen kitchen) {
-        try {
-            kitchenRepository.save(kitchen);
-        } catch (Exception ex) {
-            System.out.println(ex.getCause().toString());
-        }
+        serviceCallsExceptionHandler.executeOrThrowErrors(() -> kitchenRepository.save(kitchen));
     }
 
     @Transactional
-    public Optional<Kitchen> update(Kitchen kitchen, Long id) {
+    public Kitchen update(Kitchen kitchen, Long id) {
         var kitchenInDB = searchOrThrowError(id);
-        if (kitchenInDB.isPresent()) {
-            try {
-                BeanUtils.copyProperties(kitchen, kitchenInDB.get(), "id");
-                return Optional.of(kitchenRepository.save(kitchenInDB.get()));
-            } catch (Exception ex) {
-                // Adicionar erro
-                System.out.println(ex.getCause().toString());
-            }
-        }
-        return Optional.empty();
+        return serviceCallsExceptionHandler.executeOrThrowErrorsWithReturn(() -> {
+            var newKitchen = apiObjectMapper.modelToUpdatedModel(kitchen, kitchenInDB);
+            var updatedKitchen = kitchenRepository.save(newKitchen);
+            kitchenRepository.flush();
+            return updatedKitchen;
+        });
     }
 
+    @Transactional
     public void delete(Long id) {
         searchOrThrowError(id);
         serviceCallsExceptionHandler.executeOrThrowErrors(
-                () -> kitchenRepository.deleteById(id));
+                () -> {
+                    kitchenRepository.deleteById(id);
+                    kitchenRepository.flush();
+                });
 
     }
 
-    private @NotNull Optional<Kitchen> searchOrThrowError(Long id) {
-        var result = kitchenRepository.findById(id).orElseThrow(
+    private @NotNull Kitchen searchOrThrowError(Long id) {
+        return kitchenRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Resource not found"));
-        return Optional.of(result);
     }
 }

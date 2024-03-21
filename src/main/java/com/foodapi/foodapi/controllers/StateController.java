@@ -3,7 +3,6 @@ package com.foodapi.foodapi.controllers;
 import com.foodapi.foodapi.DTO.StateDTO;
 import com.foodapi.foodapi.Services.StateService;
 import com.foodapi.foodapi.core.utils.ApiObjectMapper;
-import com.foodapi.foodapi.core.utils.OptionalReturnUtils;
 import com.foodapi.foodapi.model.State;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +19,6 @@ public class StateController {
     @Autowired
     private ApiObjectMapper<State> apiObjectMapper;
 
-    @Autowired
-    private OptionalReturnUtils<State> optionalReturnUtils;
-
     @GetMapping
     public ResponseEntity<List<State>> getAll() {
         return ResponseEntity.ok(stateService.getAll());
@@ -30,16 +26,15 @@ public class StateController {
 
     @PostMapping
     public ResponseEntity<State> save(@Valid @RequestBody StateDTO stateDTO) {
-        var createdState = stateService.save(
+        var result = stateService.save(
                 apiObjectMapper.dtoToModel(stateDTO, State.class));
-        return optionalReturnUtils.getResponseOrBadRequestStatusForCreated(
-                createdState);
+        return ResponseEntity.ok(result);
+
     }
 
     @GetMapping("{id}")
     public ResponseEntity<State> getOne(@PathVariable Long id) {
-        var state = stateService.getOne(id);
-        return optionalReturnUtils.getResponseOrNotFoundStatusWithNoContent(state);
+        return ResponseEntity.ok(stateService.getOne(id));
     }
 
     @PutMapping("{id}")
@@ -47,7 +42,7 @@ public class StateController {
         var newState = apiObjectMapper.dtoToModel(stateDTO, State.class);
         var updatedState = stateService.update(
                 newState, id);
-        return optionalReturnUtils.getResponseOrBadRequestStatusForCreated(updatedState);
+        return ResponseEntity.ok(updatedState);
     }
 
     @DeleteMapping("{id}")

@@ -42,44 +42,44 @@ public class RestaurantService {
     }
 
     @Transactional
-    public Optional<Restaurant> save(@NotNull Restaurant restaurant) {
+    public Restaurant save(@NotNull Restaurant restaurant) {
         var kitchenId = restaurant.getKitchen().getId();
         var kitchen = kitchenRepository.findById(kitchenId);
         if (kitchen.isPresent()) {
             restaurant.setKitchen(kitchen.get());
-            try {
-                var restaurantCreated = restaurantRepository.save(restaurant);
-                return Optional.of(restaurantCreated);
-            } catch (Exception ex) {
-                return Optional.empty();
-            }
+            return restaurantRepository.save(restaurant);
+
         }
-        return Optional.empty();
+        throw new EntityNotFoundException("Kitchen not found");
     }
 
     @Transactional
     public Restaurant update(@NotNull Restaurant restaurant, Long id) {
         var restaurantInDB = searchOrNotFound(id);
-        try {
-            var newRestaurant = apiObjectMapper.modelToUpdatedModel(
-                    restaurant,
-                    restaurantInDB
-            );
-            var kitchen = restaurant.getKitchen();
-            if (kitchen != null) {
-                var newKitchen = kitchenRepository.findById(kitchen.getId());
-                newKitchen.ifPresent(newRestaurant::setKitchen);
-            }
-            return newRestaurant;
-        } catch (Exception ex) {
-            throw new BadRequestException("One or more fields are not compatible");
-        }
+        return serviceCallsExceptionHandler.executeOrThrowErrorsWithReturn(() -> {
+                    var newRestaurant = apiObjectMapper.modelToUpdatedModel(
+                            restaurant,
+                            restaurantInDB
+                    );
+                    var kitchen = restaurant.getKitchen();
+                    if (kitchen != null) {
+                        var newKitchen = kitchenRepository
+                                .findById(kitchen.getId());
+                        newKitchen.ifPresent(newRestaurant::setKitchen);
+                    }
+                    return newRestaurant;
+                }
+        );
     }
 
+    @Transactional
     public void delete(Long id) {
         searchOrNotFound(id);
         serviceCallsExceptionHandler.executeOrThrowErrors(
-                () -> restaurantRepository.deleteById(id));
+                () -> {
+                    restaurantRepository.deleteById(id);
+                    restaurantRepository.flush();
+                });
     }
 
     private @NotNull Restaurant searchOrNotFound(Long id) {

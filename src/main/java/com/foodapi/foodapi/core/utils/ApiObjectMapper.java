@@ -5,7 +5,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.foodapi.foodapi.exceptions.ApiObjectMapperException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.expression.spel.InternalParseException;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -21,8 +23,12 @@ public class ApiObjectMapper<T> {
         return mapper.convertValue(dto, model);
     }
 
-    public T modelToUpdatedModel(Object model, T updatedModel) throws JsonMappingException {
-        return mapper.updateValue(updatedModel, model);
+    public T modelToUpdatedModel(Object model, T updatedModel) {
+        try {
+            return mapper.updateValue(updatedModel, model);
+        } catch (JsonMappingException ex) {
+            throw new ApiObjectMapperException(ex.getMessage());
+        }
     }
 
 }
