@@ -6,6 +6,7 @@ import com.foodapi.foodapi.core.utils.ApiObjectMapper;
 import com.foodapi.foodapi.model.State;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +29,7 @@ public class StateController {
     public ResponseEntity<State> save(@Valid @RequestBody StateDTO stateDTO) {
         var result = stateService.save(
                 apiObjectMapper.dtoToModel(stateDTO, State.class));
-        return ResponseEntity.ok(result);
+        return ResponseEntity.status(HttpStatus.CREATED).body(result);
 
     }
 
@@ -42,7 +43,7 @@ public class StateController {
         var newState = apiObjectMapper.dtoToModel(stateDTO, State.class);
         var updatedState = stateService.update(
                 newState, id);
-        return ResponseEntity.ok(updatedState);
+        return ResponseEntity.status(HttpStatus.CREATED).body(updatedState);
     }
 
     @DeleteMapping("{id}")

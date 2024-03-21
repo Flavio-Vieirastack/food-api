@@ -8,6 +8,7 @@ import com.foodapi.foodapi.model.Kitchen;
 import com.foodapi.foodapi.model.Restaurant;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,7 +43,7 @@ public class RestaurantController {
         restaurantModel.setKitchen(kitchen);
         var createdRestaurant = restaurantService.save(
                 restaurantModel);
-       return ResponseEntity.ok(createdRestaurant);
+       return ResponseEntity.status(HttpStatus.CREATED).body(createdRestaurant);
 
     }
 
@@ -59,7 +60,7 @@ public class RestaurantController {
         }
         var restaurantUpdateResponse = restaurantService.update(
                 restaurantModel, id);
-            return ResponseEntity.ok(restaurantUpdateResponse);
+            return ResponseEntity.status(HttpStatus.CREATED).body(restaurantUpdateResponse);
     }
 
     @DeleteMapping("{id}")

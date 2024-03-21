@@ -32,9 +32,9 @@ public class KitchenController {
         return ResponseEntity.ok(kitchen);
     }
     @PostMapping
-    public void save(@Valid @RequestBody KitchenDTO kitchenDTO) {
-
+    public ResponseEntity<?> save(@Valid @RequestBody KitchenDTO kitchenDTO) {
         kitchenService.save(toModel(kitchenDTO));
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
     @PutMapping("/{id}")
     public ResponseEntity<Kitchen> update(@RequestBody KitchenDTO kitchenDTO, @PathVariable Long id){

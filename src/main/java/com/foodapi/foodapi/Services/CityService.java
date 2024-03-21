@@ -2,20 +2,16 @@ package com.foodapi.foodapi.Services;
 
 import com.foodapi.foodapi.core.utils.ApiObjectMapper;
 import com.foodapi.foodapi.core.utils.ServiceCallsExceptionHandler;
-import com.foodapi.foodapi.exceptions.BadRequestException;
 import com.foodapi.foodapi.exceptions.EntityNotFoundException;
 import com.foodapi.foodapi.model.City;
-import com.foodapi.foodapi.model.Restaurant;
 import com.foodapi.foodapi.repository.CityRepository;
 import com.foodapi.foodapi.repository.StateRepository;
 import jakarta.transaction.Transactional;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CityService {
@@ -43,7 +39,8 @@ public class CityService {
     @Transactional
     public City create(@NotNull City city) {
         var state = stateRepository.findById(city.getState().getId()).orElseThrow(
-                () -> new BadRequestException("The body " + city + " is invalid")
+                () -> new EntityNotFoundException(
+                        "The state with id: " + city.getState().getId() + " not found")
         );
         city.setState(state);
         return serviceCallsExceptionHandler.executeOrThrowErrorsWithReturn(() ->
@@ -55,7 +52,8 @@ public class CityService {
     public City update(@NotNull City city, Long id) {
         var cityInDb = searchOrNotFound(id);
         var state = stateRepository.findById(city.getState().getId()).orElseThrow(
-                () -> new EntityNotFoundException("State with id: " + city.getState().getId() + " not found")
+                () -> new EntityNotFoundException(
+                        "State with id: " + city.getState().getId() + " not found")
         );
         city.setState(state);
         return serviceCallsExceptionHandler.executeOrThrowErrorsWithReturn(() -> {
