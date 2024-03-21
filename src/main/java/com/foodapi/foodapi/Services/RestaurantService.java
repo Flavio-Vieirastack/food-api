@@ -1,21 +1,16 @@
 package com.foodapi.foodapi.Services;
-
 import com.foodapi.foodapi.core.utils.ApiObjectMapper;
 import com.foodapi.foodapi.core.utils.ServiceCallsExceptionHandler;
-import com.foodapi.foodapi.exceptions.BadRequestException;
+import com.foodapi.foodapi.exceptions.EmptyUpdateBodyException;
 import com.foodapi.foodapi.exceptions.EntityNotFoundException;
 import com.foodapi.foodapi.model.Restaurant;
 import com.foodapi.foodapi.repository.KitchenRepository;
 import com.foodapi.foodapi.repository.RestaurantRepository;
 import jakarta.transaction.Transactional;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpServerErrorException;
-
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class RestaurantService {
@@ -55,6 +50,7 @@ public class RestaurantService {
 
     @Transactional
     public Restaurant update(@NotNull Restaurant restaurant, Long id) {
+        verifyAllFieldsBeforeUpdate(restaurant);
         var restaurantInDB = searchOrNotFound(id);
         return serviceCallsExceptionHandler.executeOrThrowErrorsWithReturn(() -> {
                     var newRestaurant = apiObjectMapper.modelToUpdatedModel(
@@ -64,8 +60,14 @@ public class RestaurantService {
                     var kitchen = restaurant.getKitchen();
                     if (kitchen != null) {
                         var newKitchen = kitchenRepository
-                                .findById(kitchen.getId());
-                        newKitchen.ifPresent(newRestaurant::setKitchen);
+                                .findById(
+                                        kitchen.getId()
+                                ).orElseThrow(
+                                        () -> new EntityNotFoundException(
+                                                "The kitchen with id: " + kitchen.getId() +
+                                                        " is not present"
+                                        ));
+                        newRestaurant.setKitchen(newKitchen);
                     }
                     return newRestaurant;
                 }
@@ -81,10 +83,30 @@ public class RestaurantService {
                     restaurantRepository.flush();
                 });
     }
+    @Transactional
+    public void inactivateRestaurant(Long id) {
+       searchOrNotFound(id).setActive(false);
+       // Não tem necessidade de chamar o save pois como roda em uma transação
+        //o spring já sabe que isso deve ir para o banco de dados
+    }
+    @Transactional
+    public void activateRestaurant(Long id) {
+       searchOrNotFound(id).setActive(true);
+       // Não tem necessidade de chamar o save pois como roda em uma transação
+        //o spring já sabe que isso deve ir para o banco de dados
+    }
 
     private @NotNull Restaurant searchOrNotFound(Long id) {
         return restaurantRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Resource not found")
         );
+    }
+
+    private void verifyAllFieldsBeforeUpdate(@NotNull Restaurant restaurant) {
+        if(restaurant.getName() == null &&
+                restaurant.getDeliveryTax() == null &&
+                restaurant.getKitchen() == null) {
+            throw new EmptyUpdateBodyException("All fields are empty, please enter a valid body");
+        }
     }
 }

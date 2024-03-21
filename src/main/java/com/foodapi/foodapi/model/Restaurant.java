@@ -24,6 +24,7 @@ public class Restaurant {
     private String name;
     @Column(name = "delivery_tax", nullable = false)
     private BigDecimal deliveryTax;
+    private boolean active;
     @ManyToOne
     private Kitchen kitchen; //Muitos restaurantes tem uma cozinha
     @ManyToMany

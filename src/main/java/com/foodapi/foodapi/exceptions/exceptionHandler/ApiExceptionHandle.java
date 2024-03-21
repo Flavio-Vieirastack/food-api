@@ -2,10 +2,7 @@ package com.foodapi.foodapi.exceptions.exceptionHandler;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import com.foodapi.foodapi.exceptions.ApiObjectMapperException;
-import com.foodapi.foodapi.exceptions.BadRequestException;
-import com.foodapi.foodapi.exceptions.EntityConflictException;
-import com.foodapi.foodapi.exceptions.EntityNotFoundException;
+import com.foodapi.foodapi.exceptions.*;
 import com.foodapi.foodapi.exceptions.exceptionBody.ExceptionBody;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jetbrains.annotations.NotNull;
@@ -157,6 +154,15 @@ public class ApiExceptionHandle extends ResponseEntityExceptionHandler {
                 ex, HttpStatus.INTERNAL_SERVER_ERROR).build();
         return handleExceptionInternal(
                 ex, exceptionBody, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request
+        );
+    }
+    @ExceptionHandler(EmptyUpdateBodyException.class)
+    public ResponseEntity<?> emptyUpdateBody(
+            @NotNull EmptyUpdateBodyException ex, WebRequest request) {
+        var exceptionBody = buildExceptionBody(
+                ex, HttpStatus.BAD_REQUEST).build();
+        return handleExceptionInternal(
+                ex, exceptionBody, new HttpHeaders(), HttpStatus.BAD_REQUEST, request
         );
     }
 

@@ -67,4 +67,15 @@ public class RestaurantController {
        restaurantService.delete(id);
        return ResponseEntity.ok().build();
     }
+
+    @PutMapping("/activate/{id}")
+    public ResponseEntity<?> activate(@PathVariable Long id) {
+        restaurantService.activateRestaurant(id);
+        return ResponseEntity.noContent().build();
+    }
+    @PutMapping("/inactivate/{id}")
+    public ResponseEntity<?> inactivate(@PathVariable Long id) {
+        restaurantService.inactivateRestaurant(id);
+        return ResponseEntity.noContent().build();
+    }
 }
