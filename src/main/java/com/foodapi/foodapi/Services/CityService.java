@@ -42,30 +42,28 @@ public class CityService {
 
     @Transactional
     public City create(@NotNull City city) {
-        var state = stateRepository.findById(city.getState().getId());
-        if (state.isPresent()) {
-            city.setState(state.get());
-            return serviceCallsExceptionHandler.executeOrThrowErrorsWithReturn(() -> {
-                return cityRepository.save(city);
-            });
-        }
-        throw new BadRequestException("The body " + city + " is invalid");
+        var state = stateRepository.findById(city.getState().getId()).orElseThrow(
+                () -> new BadRequestException("The body " + city + " is invalid")
+        );
+        city.setState(state);
+        return serviceCallsExceptionHandler.executeOrThrowErrorsWithReturn(() ->
+                cityRepository.save(city)
+        );
     }
 
     @Transactional
     public City update(@NotNull City city, Long id) {
         var cityInDb = searchOrNotFound(id);
-        var state = stateRepository.findById(city.getState().getId());
-        if (state.isPresent()) {
-            city.setState(state.get());
-            return serviceCallsExceptionHandler.executeOrThrowErrorsWithReturn(() -> {
-                var newCity = apiObjectMapper.modelToUpdatedModel(city, cityInDb);
-                var updatedCity = cityRepository.save(city);
-                cityRepository.flush();
-                return updatedCity;
-            });
-        }
-        throw new EntityNotFoundException("State with id: " + city.getState().getId() + " not found");
+        var state = stateRepository.findById(city.getState().getId()).orElseThrow(
+                () -> new EntityNotFoundException("State with id: " + city.getState().getId() + " not found")
+        );
+        city.setState(state);
+        return serviceCallsExceptionHandler.executeOrThrowErrorsWithReturn(() -> {
+            var newCity = apiObjectMapper.modelToUpdatedModel(city, cityInDb);
+            var updatedCity = cityRepository.save(newCity);
+            cityRepository.flush();
+            return updatedCity;
+        });
     }
 
     @Transactional

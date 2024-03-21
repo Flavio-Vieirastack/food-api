@@ -39,13 +39,11 @@ public class RestaurantService {
     @Transactional
     public Restaurant save(@NotNull Restaurant restaurant) {
         var kitchenId = restaurant.getKitchen().getId();
-        var kitchen = kitchenRepository.findById(kitchenId);
-        if (kitchen.isPresent()) {
-            restaurant.setKitchen(kitchen.get());
+        var kitchen = kitchenRepository.findById(kitchenId).orElseThrow(
+                () -> new EntityNotFoundException(
+                        "Kitchen with id: " + kitchenId + " not found"));
+            restaurant.setKitchen(kitchen);
             return restaurantRepository.save(restaurant);
-
-        }
-        throw new EntityNotFoundException("Kitchen not found");
     }
 
     @Transactional
@@ -69,7 +67,7 @@ public class RestaurantService {
                                         ));
                         newRestaurant.setKitchen(newKitchen);
                     }
-                    return newRestaurant;
+                    return restaurantRepository.save(newRestaurant);
                 }
         );
     }
