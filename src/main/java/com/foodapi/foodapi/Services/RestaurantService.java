@@ -4,6 +4,7 @@ import com.foodapi.foodapi.core.utils.ServiceCallsExceptionHandler;
 import com.foodapi.foodapi.exceptions.EmptyUpdateBodyException;
 import com.foodapi.foodapi.exceptions.EntityNotFoundException;
 import com.foodapi.foodapi.model.Restaurant;
+import com.foodapi.foodapi.repository.CityRepository;
 import com.foodapi.foodapi.repository.KitchenRepository;
 import com.foodapi.foodapi.repository.RestaurantRepository;
 import jakarta.transaction.Transactional;
@@ -26,6 +27,9 @@ public class RestaurantService {
     @Autowired
     private ServiceCallsExceptionHandler serviceCallsExceptionHandler;
 
+    @Autowired
+    private CityRepository cityRepository;
+
 
     public List<Restaurant> getAll() {
 
@@ -38,11 +42,17 @@ public class RestaurantService {
 
     @Transactional
     public Restaurant save(@NotNull Restaurant restaurant) {
+        var cityID = restaurant.getAddress().getCity().getId();
         var kitchenId = restaurant.getKitchen().getId();
+        var city = cityRepository.findById(cityID).orElseThrow(
+                () -> new EntityNotFoundException(
+                        "City with id: " + cityID + " not found")
+        );
         var kitchen = kitchenRepository.findById(kitchenId).orElseThrow(
                 () -> new EntityNotFoundException(
                         "Kitchen with id: " + kitchenId + " not found"));
             restaurant.setKitchen(kitchen);
+            restaurant.getAddress().setCity(city);
             return restaurantRepository.save(restaurant);
     }
 

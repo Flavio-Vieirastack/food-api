@@ -18,7 +18,6 @@ public class Address {
     @Column(name = "address_district")
     private String district;
     @JoinColumn(name = "address_city")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private City city;
-
 }

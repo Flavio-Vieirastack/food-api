@@ -4,6 +4,8 @@ import com.foodapi.foodapi.DTO.RestaurantDTO;
 import com.foodapi.foodapi.DTO.RestaurantUpdateDTO;
 import com.foodapi.foodapi.Services.RestaurantService;
 import com.foodapi.foodapi.core.utils.ApiObjectMapper;
+import com.foodapi.foodapi.model.City;
+import com.foodapi.foodapi.model.Embedded.Address;
 import com.foodapi.foodapi.model.Kitchen;
 import com.foodapi.foodapi.model.Restaurant;
 import jakarta.validation.Valid;
@@ -22,6 +24,8 @@ public class RestaurantController {
     RestaurantService restaurantService;
     @Autowired
     ApiObjectMapper<Restaurant> apiObjectMapper;
+    @Autowired
+    ApiObjectMapper<Address> apiObjectMapperAddress;
 
     @GetMapping
     public ResponseEntity<List<Restaurant>> getAll() {
@@ -39,8 +43,13 @@ public class RestaurantController {
         var restaurantModel = apiObjectMapper.dtoToModel(
                 restaurantDTO, Restaurant.class);
         var kitchen = new Kitchen();
+        var city = new City();
+        city.setId(restaurantDTO.cityID());
         kitchen.setId(restaurantDTO.kitchenID());
         restaurantModel.setKitchen(kitchen);
+        var address = apiObjectMapperAddress.dtoToModel(restaurantDTO, Address.class);
+        address.setCity(city);
+        restaurantModel.setAddress(address);
         var createdRestaurant = restaurantService.save(
                 restaurantModel);
        return ResponseEntity.status(HttpStatus.CREATED).body(createdRestaurant);

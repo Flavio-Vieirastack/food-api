@@ -35,7 +35,6 @@ public class Restaurant {
     @JsonIgnore
     private List<PaymentType> paymentTypes = new ArrayList<>();
     @Embedded
-    @JsonIgnore
     private Address address;
     @CreationTimestamp
     @Column(columnDefinition = "datetime")
