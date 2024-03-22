@@ -52,7 +52,7 @@ public class RestaurantController {
         restaurantModel.setAddress(address);
         var createdRestaurant = restaurantService.save(
                 restaurantModel);
-       return ResponseEntity.status(HttpStatus.CREATED).body(createdRestaurant);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdRestaurant);
 
     }
 
@@ -62,20 +62,33 @@ public class RestaurantController {
             @PathVariable Long id) {
         var restaurantModel = apiObjectMapper.dtoToModel(
                 restaurantUpdateDTO, Restaurant.class);
-        if(restaurantUpdateDTO.kitchenId() != null) {
+        if (restaurantUpdateDTO.kitchenId() != null) {
             var newKitchen = new Kitchen();
             newKitchen.setId(restaurantUpdateDTO.kitchenId());
             restaurantModel.setKitchen(newKitchen);
         }
+        if(restaurantUpdateDTO.complement() != null ||
+                restaurantUpdateDTO.zipCode() != null ||
+                restaurantUpdateDTO.publicPlace() != null ||
+                restaurantUpdateDTO.number() != null ||
+                restaurantUpdateDTO.district() != null) {
+            var newAddress = apiObjectMapperAddress.dtoToModel(
+                    restaurantUpdateDTO, Address.class);
+            restaurantModel.setAddress(newAddress);
+            if (restaurantUpdateDTO.cityID() != null) {
+                newAddress.setCity(new City());
+                newAddress.getCity().setId(restaurantUpdateDTO.cityID());
+            }
+        }
         var restaurantUpdateResponse = restaurantService.update(
                 restaurantModel, id);
-            return ResponseEntity.status(HttpStatus.CREATED).body(restaurantUpdateResponse);
+        return ResponseEntity.status(HttpStatus.CREATED).body(restaurantUpdateResponse);
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<Restaurant> delete(@PathVariable Long id) {
-       restaurantService.delete(id);
-       return ResponseEntity.ok().build();
+        restaurantService.delete(id);
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/activate/{id}")
@@ -83,6 +96,7 @@ public class RestaurantController {
         restaurantService.activateRestaurant(id);
         return ResponseEntity.noContent().build();
     }
+
     @PutMapping("/inactivate/{id}")
     public ResponseEntity<?> inactivate(@PathVariable Long id) {
         restaurantService.inactivateRestaurant(id);

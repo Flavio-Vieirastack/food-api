@@ -30,7 +30,6 @@ public class RestaurantService {
     @Autowired
     private CityRepository cityRepository;
 
-
     public List<Restaurant> getAll() {
 
         return restaurantRepository.findAll();
@@ -77,7 +76,22 @@ public class RestaurantService {
                                         ));
                         newRestaurant.setKitchen(newKitchen);
                     }
-                    return restaurantRepository.save(newRestaurant);
+                    var address = restaurant.getAddress();
+                    if(address != null && address.getCity() != null) {
+                        var cityID = address.getCity().getId();
+                        var newCity =cityRepository.findById(cityID).orElseThrow(
+                                () -> new EntityNotFoundException(
+                                        "The City with id: " + cityID +
+                                                " is not present"
+                                )
+                        );
+                        newRestaurant.getAddress().setCity(newCity);
+                    }
+                    var updatedRestaurant = restaurantRepository.save(newRestaurant);
+                    restaurantRepository.flush();
+                    cityRepository.flush();
+                    kitchenRepository.flush();
+                    return  updatedRestaurant;
                 }
         );
     }
@@ -113,7 +127,7 @@ public class RestaurantService {
     private void verifyAllFieldsBeforeUpdate(@NotNull Restaurant restaurant) {
         if(restaurant.getName() == null &&
                 restaurant.getDeliveryTax() == null &&
-                restaurant.getKitchen() == null) {
+                restaurant.getKitchen() == null && restaurant.getAddress() == null) {
             throw new EmptyUpdateBodyException("All fields are empty, please enter a valid body");
         }
     }
