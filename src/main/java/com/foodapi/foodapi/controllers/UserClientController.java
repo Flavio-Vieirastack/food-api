@@ -29,7 +29,7 @@ public class UserClientController {
     @PostMapping
     public ResponseEntity<?> create(@RequestBody @Valid UserClientDTO userClientDTO) {
          userClientService.create(userClientDTO);
-         return ResponseEntity.ok().build();
+         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PutMapping("{id}")

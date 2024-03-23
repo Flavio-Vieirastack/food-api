@@ -3,6 +3,7 @@ package com.foodapi.foodapi.Services;
 import com.foodapi.foodapi.DTO.UserClientDTO;
 import com.foodapi.foodapi.DTO.UserClientUpdateDTO;
 import com.foodapi.foodapi.core.utils.CreateAndUpdateEntityHelper;
+import com.foodapi.foodapi.exceptions.EntityConflictException;
 import com.foodapi.foodapi.exceptions.EntityNotFoundException;
 import com.foodapi.foodapi.model.GroupPermissions;
 import com.foodapi.foodapi.model.UserClient;
@@ -48,6 +49,10 @@ public class UserClientService {
 //                userClientDTO.permissionsId());
 //        userClient.setGroupPermissions(permissions.stream().toList());
 //        userClientRepository.flush();
+        var hasUser = userClientRepository.findByEmail(userClientDTO.email());
+        if(hasUser != null) {
+            throw new EntityConflictException("User exists with this email");
+        }
         createAndUpdateEntityHelper.create(userClientDTO, UserClient.class);
     }
 
