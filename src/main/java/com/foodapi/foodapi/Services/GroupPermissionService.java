@@ -3,6 +3,7 @@ package com.foodapi.foodapi.Services;
 import com.foodapi.foodapi.DTO.GroupPermissionDTO;
 import com.foodapi.foodapi.DTO.GroupPermissionUpdateDTO;
 import com.foodapi.foodapi.core.utils.ApiObjectMapper;
+import com.foodapi.foodapi.core.utils.HasDuplicatedItems;
 import com.foodapi.foodapi.core.utils.ServiceCallsExceptionHandler;
 import com.foodapi.foodapi.exceptions.EmptyUpdateBodyException;
 import com.foodapi.foodapi.exceptions.EntityNotFoundException;
@@ -32,6 +33,9 @@ public class GroupPermissionService {
     @Autowired
     private ServiceCallsExceptionHandler serviceCallsExceptionHandler;
 
+    @Autowired
+    private HasDuplicatedItems hasDuplicatedItems;
+
     public List<GroupPermissions> getAll() {
         return groupPermissionRepository.findAll();
     }
@@ -42,6 +46,7 @@ public class GroupPermissionService {
 
     @Transactional
     public void create(GroupPermissionDTO groupPermissionDTO) {
+        hasDuplicatedItems.hasDuplicates(groupPermissionDTO.permissionsId().stream().toList());
         var permissions = getAllPermissions(groupPermissionDTO.permissionsId());
         var groupPermissions = apiObjectMapper.dtoToModel(
                 groupPermissionDTO, GroupPermissions.class);
@@ -52,6 +57,7 @@ public class GroupPermissionService {
 
     @Transactional
     public GroupPermissions update(GroupPermissionUpdateDTO groupPermissionUpdateDTO, Long id) {
+        hasDuplicatedItems.hasDuplicates(groupPermissionUpdateDTO.permissionsId().stream().toList());
         verifyAllFields(groupPermissionUpdateDTO);
         var groupPermissionsInDb = findOrFail(id);
         var newGroupPermission = apiObjectMapper.dtoToModel(

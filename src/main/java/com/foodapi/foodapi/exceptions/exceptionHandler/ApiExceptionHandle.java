@@ -176,6 +176,15 @@ public class ApiExceptionHandle extends ResponseEntityExceptionHandler {
                 ex, exceptionBody, new HttpHeaders(), HttpStatus.BAD_REQUEST, request
         );
     }
+    @ExceptionHandler(DuplicatedItemException.class)
+    public ResponseEntity<?> duplicatedItems(
+            @NotNull DuplicatedItemException ex, WebRequest request) {
+        var exceptionBody = buildExceptionBody(
+                ex, HttpStatus.BAD_REQUEST ).build();
+        return handleExceptionInternal(
+                ex, exceptionBody, new HttpHeaders(), HttpStatus.BAD_REQUEST, request
+        );
+    }
 
     private ExceptionBody.@NotNull ExceptionBodyBuilder buildExceptionBody(
             @NotNull Exception ex,
