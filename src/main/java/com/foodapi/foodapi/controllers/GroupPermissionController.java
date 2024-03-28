@@ -4,6 +4,7 @@ import com.foodapi.foodapi.DTO.GroupPermissionDTO;
 import com.foodapi.foodapi.DTO.GroupPermissionUpdateDTO;
 import com.foodapi.foodapi.Services.GroupPermissionService;
 import com.foodapi.foodapi.model.GroupPermissions;
+import com.foodapi.foodapi.model.Permission;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,22 @@ public class GroupPermissionController {
         return ResponseEntity.ok(groupPermissionService.getOne(id));
     }
 
+    @GetMapping("/permissions/{id}")
+    public ResponseEntity<List<Permission>> getPermissionsByGroup(@PathVariable Long id) {
+        return ResponseEntity.ok(groupPermissionService.getPermissionByGroupId(id));
+    }
+    @PutMapping("/permissions/{permissionId}/group-permission/{groupPermissionId}")
+    public ResponseEntity<?> addPermission(
+            @PathVariable Long permissionId, @PathVariable Long groupPermissionId) {
+        groupPermissionService.addPermission(permissionId, groupPermissionId);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+    @DeleteMapping("/permissions/{permissionId}/group-permission/{groupPermissionId}")
+    public ResponseEntity<?> removePermission(
+            @PathVariable Long permissionId, @PathVariable Long groupPermissionId) {
+        groupPermissionService.removePermission(permissionId, groupPermissionId);
+        return ResponseEntity.ok().build();
+    }
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody GroupPermissionDTO groupPermissionDTO) {
         groupPermissionService.create(groupPermissionDTO);

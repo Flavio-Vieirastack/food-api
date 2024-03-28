@@ -22,4 +22,12 @@ public class GroupPermissions {
             inverseJoinColumns = @JoinColumn(name = "permission_id")
     )
     private Set<Permission> permissions = new HashSet<>();
+
+    public void removePermission(Permission permission) {
+        getPermissions().remove(permission);
+    }
+
+    public void addPermission(Permission permission) {
+        getPermissions().add(permission);
+    }
 }

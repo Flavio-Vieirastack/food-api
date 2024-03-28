@@ -31,16 +31,16 @@ public class CreateAndUpdateEntityHelper<I, O, L, C> {
         var objectInDb = findOrFail(id);
         var newObject = apiObjectMapper.dtoToModel(dto, target);
         var updatedObject = apiObjectMapper.modelToUpdatedModel(newObject, objectInDb);
-        var updatedObjectInDb = repository.save(updatedObject);
+        var updatedObjectInDb = repository.save(updatedObject);//No prpjeto final deixar o save para o service e ver a questão do flush
         repository.flush();
         return updatedObjectInDb;
     }
 
-    public UpdatedObject<O,L> updateWithOneNestedObject(I dto, Long id, Long nestedObjectId) {
+    public UpdatedOrCreatedObject<O,L> updateWithOneNestedObject(I dto, Long id, Long nestedObjectId) {
         updateObjectValidate.throwEmptyBodyException(dto);
         var objectInDb = findOrFail(id);
         var newObject = apiObjectMapper.modelToUpdatedModel(dto, objectInDb);
-        var updatedObject = new UpdatedObject<O,L>();
+        var updatedObject = new UpdatedOrCreatedObject<O,L>();
         if(nestedObjectId != null) {
             var nestedObjectInDb = nestedObjectRepository.findById(nestedObjectId)
                     .orElseThrow(
@@ -52,14 +52,14 @@ public class CreateAndUpdateEntityHelper<I, O, L, C> {
         return updatedObject;
     }
 
-    public UpdatedObject<O,L> updateWithList(I dto, Long id, Class<O> target,
-                            List<Long> ids) {
+    public UpdatedOrCreatedObject<O,L> updateWithList(I dto, Long id, Class<O> target,
+                                                      List<Long> ids) {
         updateObjectValidate.throwEmptyListException(ids, "List of ids are empty");
         updateObjectValidate.throwEmptyBodyException(dto);
         var objectInDb = findOrFail(id);
         var model = apiObjectMapper.dtoToModel(dto, target);
         var newObject = apiObjectMapper.modelToUpdatedModel(objectInDb, model);
-        var updated = new UpdatedObject<O, L>();
+        var updated = new UpdatedOrCreatedObject<O, L>();
         if (ids != null && !ids.isEmpty()) {
             hasDuplicatedItems.hasDuplicates(ids);
             Set<L> set = new HashSet<>();
@@ -74,9 +74,10 @@ public class CreateAndUpdateEntityHelper<I, O, L, C> {
             var listOfObjects = listRepository.findAll();
             updated.setListOfObjects(listOfObjects);
         }
-        var updatedObject = repository.save(newObject);
-        updated.setUpdatedObject(updatedObject);
+        repository.save(newObject);//No prpjeto final deixar o save para o service e ver a questão do flush
+        updated.setUpdatedObject(newObject);
         repository.flush();
+        listRepository.flush();
         return updated;
     }
 
@@ -84,6 +85,22 @@ public class CreateAndUpdateEntityHelper<I, O, L, C> {
         var createdObject = apiObjectMapper.dtoToModel(dto, target);
         repository.save(createdObject);
         repository.flush();
+    }
+    public UpdatedOrCreatedObject<O,L> createWithList(C dto, Class<O> target, List<Long> ids) {
+        hasDuplicatedItems.hasDuplicates(ids);
+        Set<L> set = new HashSet<>();
+        for (Long id : ids) {
+           var result = listRepository.findById(id).orElseThrow(
+                   () -> new EntityNotFoundException("Entity with id: + " + id + " not found")
+           );
+           set.add(result);
+        }
+        var updatedObject = apiObjectMapper.dtoToModel(dto, target);
+        var createdObject = new UpdatedOrCreatedObject<O,L>();
+        createdObject.setUpdatedObject(updatedObject);
+        createdObject.setListOfObjects(set.stream().toList());
+        listRepository.flush();
+        return createdObject;
     }
 
     private O findOrFail(Long id) {
@@ -93,7 +110,7 @@ public class CreateAndUpdateEntityHelper<I, O, L, C> {
     }
     @Getter
     @Setter
-    public static class UpdatedObject<O, L> {
+    public static class UpdatedOrCreatedObject<O, L> {
         private O updatedObject;
         private List<L> listOfObjects;
         private L nestedObject;

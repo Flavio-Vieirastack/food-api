@@ -2,7 +2,9 @@ package com.foodapi.foodapi.Services;
 
 import com.foodapi.foodapi.DTO.GroupPermissionDTO;
 import com.foodapi.foodapi.DTO.GroupPermissionUpdateDTO;
+import com.foodapi.foodapi.DTO.UserClientUpdateDTO;
 import com.foodapi.foodapi.core.utils.ApiObjectMapper;
+import com.foodapi.foodapi.core.utils.CreateAndUpdateEntityHelper;
 import com.foodapi.foodapi.core.utils.HasDuplicatedItems;
 import com.foodapi.foodapi.core.utils.ServiceCallsExceptionHandler;
 import com.foodapi.foodapi.exceptions.EmptyUpdateBodyException;
@@ -11,6 +13,7 @@ import com.foodapi.foodapi.model.GroupPermissions;
 import com.foodapi.foodapi.model.Permission;
 import com.foodapi.foodapi.repository.GroupPermissionRepository;
 import com.foodapi.foodapi.repository.PermissionRepository;
+import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,6 +39,15 @@ public class GroupPermissionService {
     @Autowired
     private HasDuplicatedItems hasDuplicatedItems;
 
+    @Autowired
+    private CreateAndUpdateEntityHelper<?, GroupPermissions, Permission, GroupPermissionDTO> createEntity;
+    @Autowired
+    private CreateAndUpdateEntityHelper<GroupPermissionUpdateDTO, GroupPermissions, Permission, ?> updateEntity;
+
+    @PostConstruct
+    private void init() {
+        createEntity.setListRepository(permissionRepository);
+    }
     public List<GroupPermissions> getAll() {
         return groupPermissionRepository.findAll();
     }
@@ -44,14 +56,29 @@ public class GroupPermissionService {
         return findOrFail(id);
     }
 
+    public List<Permission> getPermissionByGroupId(Long groupId) {
+        var groupPermissions = findOrFail(groupId);
+        return groupPermissions.getPermissions().stream().toList();
+    }
+
     @Transactional
     public void create(GroupPermissionDTO groupPermissionDTO) {
-        hasDuplicatedItems.hasDuplicates(groupPermissionDTO.permissionsId().stream().toList());
-        var permissions = getAllPermissions(groupPermissionDTO.permissionsId());
-        var groupPermissions = apiObjectMapper.dtoToModel(
-                groupPermissionDTO, GroupPermissions.class);
-        groupPermissions.setPermissions(permissions);
-        groupPermissionRepository.save(groupPermissions);
+//        hasDuplicatedItems.hasDuplicates(groupPermissionDTO.permissionsId().stream().toList());
+//        var permissions = getAllPermissions(groupPermissionDTO.permissionsId());
+//        var groupPermissions = apiObjectMapper.dtoToModel(
+//                groupPermissionDTO, GroupPermissions.class);
+//        groupPermissions.setPermissions(permissions);
+//        groupPermissionRepository.save(groupPermissions);
+//        groupPermissionRepository.flush();
+        var result =
+                createEntity.createWithList(
+                        groupPermissionDTO,
+                        GroupPermissions.class,
+                        groupPermissionDTO.permissionsId().stream().toList()
+                );
+        var groupPermission = result.getUpdatedObject();
+        groupPermission.setPermissions(new HashSet<>(result.getListOfObjects()));
+        groupPermissionRepository.save(groupPermission);
         groupPermissionRepository.flush();
     }
 
@@ -83,6 +110,23 @@ public class GroupPermissionService {
                     groupPermissionRepository.deleteById(id);
                     groupPermissionRepository.flush();
                 });
+    }
+
+    @Transactional
+    public void addPermission(Long permissionId, Long groupId) {
+        var permission = permissionRepository.findById(permissionId).orElseThrow(
+                () -> new EntityNotFoundException("Not found")
+        );
+        var group = findOrFail(groupId);
+        group.addPermission(permission);
+    }
+    @Transactional
+    public void removePermission(Long permissionId, Long groupId) {
+        var permission = permissionRepository.findById(permissionId).orElseThrow(
+                () -> new EntityNotFoundException("Not found")
+        );
+        var group = findOrFail(groupId);
+        group.removePermission(permission);
     }
 
     private Set<Permission> getAllPermissions(Set<Long> permissionsId) {
