@@ -3,6 +3,7 @@ package com.foodapi.foodapi.controllers;
 import com.foodapi.foodapi.DTO.UserClientDTO;
 import com.foodapi.foodapi.DTO.UserClientUpdateDTO;
 import com.foodapi.foodapi.Services.UserClientService;
+import com.foodapi.foodapi.model.GroupPermissions;
 import com.foodapi.foodapi.model.UserClient;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,22 @@ public class UserClientController {
     @GetMapping("{id}")
     public UserClient findOne(@PathVariable Long id) {
         return userClientService.getOne(id);
+    }
+
+    @GetMapping("/groups/{id}")
+    public ResponseEntity<List<GroupPermissions>> getAllGroups(@PathVariable Long id) {
+        return ResponseEntity.ok(userClientService.getUserGroups(id));
+    }
+
+    @DeleteMapping("/group/{groupId}/user/{userId}")
+    public ResponseEntity<?> removeGroup(@PathVariable Long groupId, @PathVariable Long userId) {
+        userClientService.removeGroup(userId, groupId);
+        return ResponseEntity.ok().build();
+    }
+    @PutMapping("/group/{groupId}/user/{userId}")
+    public ResponseEntity<?> addGroup(@PathVariable Long groupId, @PathVariable Long userId) {
+        userClientService.addGroup(userId, groupId);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping

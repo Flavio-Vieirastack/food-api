@@ -28,6 +28,13 @@ public class UserClient {
             inverseJoinColumns = @JoinColumn(name = "group_id")
     )
     private List<GroupPermissions> groupPermissions;
+
+    public void removeGroup(GroupPermissions groupPermissions) {
+        getGroupPermissions().remove(groupPermissions);
+    }
+
+    public void addGroupPermission(GroupPermissions groupPermissions) {
+        getGroupPermissions().add(groupPermissions);
+    }
 }
 
-//parei em 07.10

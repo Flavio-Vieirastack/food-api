@@ -36,6 +36,11 @@ public class UserClientService {
         return findOrFail(id);
     }
 
+    public List<GroupPermissions> getUserGroups(Long userId) {
+        var user = findOrFail(userId);
+        return user.getGroupPermissions();
+    }
+
     @PostConstruct
     private void init() {
         createAndUpdateEntityHelper.setRepository(userClientRepository);
@@ -49,6 +54,26 @@ public class UserClientService {
         }
         createAndUpdateEntityHelper.create(userClientDTO, UserClient.class);
         userClientRepository.flush();
+    }
+
+    @Transactional
+    public void removeGroup(Long userId, Long groupId) {
+        var group = groupPermissionRepository.findById(groupId)
+                .orElseThrow(() -> new EntityNotFoundException("Not found"));
+        var user = findOrFail(userId);
+        user.removeGroup(group);
+    }
+    @Transactional
+    public void addGroup(Long userId, Long groupId) {
+        var group = groupPermissionRepository.findById(groupId)
+                .orElseThrow(() -> new EntityNotFoundException("Not found"));
+        var user = findOrFail(userId);
+        for (GroupPermissions groupPermissions : user.getGroupPermissions()) {
+            if(groupPermissions.equals(group)) {
+                throw new EntityConflictException("Conflict");
+            }
+        }
+        user.addGroupPermission(group);
     }
 
     @Transactional
