@@ -42,7 +42,8 @@ public class Restaurant {
     @UpdateTimestamp
     @Column(columnDefinition = "datetime")
     private LocalDateTime updatedAt;
-    @OneToMany
+    @OneToMany(mappedBy = "restaurant")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<Product> products = new ArrayList<>();
+    private boolean isOpen;
 }

@@ -43,21 +43,24 @@ public class UserClientService {
     }
     @Transactional
     public void create(UserClientDTO userClientDTO) {
-//        hasDuplicatedItems.hasDuplicates(userClientDTO.permissionsId().stream().toList());
-//        var userClient = apiObjectMapper.dtoToModel(userClientDTO, UserClient.class);
-//        var permissions = findOrFailPermissions(
-//                userClientDTO.permissionsId());
-//        userClient.setGroupPermissions(permissions.stream().toList());
-//        userClientRepository.flush();
         var hasUser = userClientRepository.findByEmail(userClientDTO.email());
-        if(hasUser != null) {
+        if(hasUser.isPresent()) {
             throw new EntityConflictException("User exists with this email");
         }
         createAndUpdateEntityHelper.create(userClientDTO, UserClient.class);
+        userClientRepository.flush();
     }
 
     @Transactional
     public UserClient update(UserClientUpdateDTO userClientUpdateDTO, Long id) {
+        if(userClientUpdateDTO.email() != null) {
+            var hasClientWithEmail = userClientRepository.findByEmail(
+                    userClientUpdateDTO.email()
+            );
+            if(hasClientWithEmail.isPresent()){
+                throw new EntityConflictException("User exists with this email");
+            }
+        }
         if(userClientUpdateDTO.permissionsId() != null) {
             var result =
                     createAndUpdateEntityHelper.updateWithList(

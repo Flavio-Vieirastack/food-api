@@ -1,7 +1,7 @@
 package com.foodapi.foodapi.Services;
 import com.foodapi.foodapi.core.utils.ApiObjectMapper;
 import com.foodapi.foodapi.core.utils.ServiceCallsExceptionHandler;
-import com.foodapi.foodapi.exceptions.EmptyUpdateBodyException;
+import com.foodapi.foodapi.core.utils.UpdateObjectValidate;
 import com.foodapi.foodapi.exceptions.EntityNotFoundException;
 import com.foodapi.foodapi.model.Restaurant;
 import com.foodapi.foodapi.repository.CityRepository;
@@ -30,6 +30,9 @@ public class RestaurantService {
     @Autowired
     private CityRepository cityRepository;
 
+    @Autowired
+    private UpdateObjectValidate updateObjectValidate;
+
     public List<Restaurant> getAll() {
 
         return restaurantRepository.findAll();
@@ -57,7 +60,9 @@ public class RestaurantService {
 
     @Transactional
     public Restaurant update(@NotNull Restaurant restaurant, Long id) {
-        verifyAllFieldsBeforeUpdate(restaurant);
+        updateObjectValidate.throwEmptyBodyException(restaurant);
+        updateObjectValidate.throwEmptyListException(restaurant.getPaymentTypes(), "Empty list of payment types");
+        updateObjectValidate.throwEmptyListException(restaurant.getProducts(), "Empty list of products");
         var restaurantInDB = searchOrNotFound(id);
         return serviceCallsExceptionHandler.executeOrThrowErrorsWithReturn(() -> {
                     var newRestaurant = apiObjectMapper.modelToUpdatedModel(
@@ -118,17 +123,19 @@ public class RestaurantService {
         //o spring já sabe que isso deve ir para o banco de dados
     }
 
+    @Transactional
+    public void openRestaurant(Long id) {
+        searchOrNotFound(id).setOpen(true);
+    }
+    @Transactional
+    public void closeRestaurant(Long id) {
+        searchOrNotFound(id).setOpen(false);
+    }
+
     private @NotNull Restaurant searchOrNotFound(Long id) {
         return restaurantRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Resource not found")
         );
     }
 
-    private void verifyAllFieldsBeforeUpdate(@NotNull Restaurant restaurant) {
-        if(restaurant.getName() == null &&
-                restaurant.getDeliveryTax() == null &&
-                restaurant.getKitchen() == null && restaurant.getAddress() == null) {
-            throw new EmptyUpdateBodyException("All fields are empty, please enter a valid body");
-        }
-    }
 }

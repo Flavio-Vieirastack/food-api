@@ -21,6 +21,7 @@ public class Product {
     @Column(nullable = false)
     private boolean active = true;
     @ManyToOne
+    @JoinColumn(nullable = false)
     @JsonIgnore
     private Restaurant restaurant;
 }

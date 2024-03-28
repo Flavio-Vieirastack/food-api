@@ -16,6 +16,7 @@ import java.util.Set;
 public class CreateAndUpdateEntityHelper<I, O, L, C> {
     private JpaRepository<O, Long> repository;
     private JpaRepository<L, Long> listRepository;
+    private JpaRepository<L, Long> nestedObjectRepository;
     @Autowired
     ApiObjectMapper<O> apiObjectMapper;
 
@@ -33,6 +34,22 @@ public class CreateAndUpdateEntityHelper<I, O, L, C> {
         var updatedObjectInDb = repository.save(updatedObject);
         repository.flush();
         return updatedObjectInDb;
+    }
+
+    public UpdatedObject<O,L> updateWithOneNestedObject(I dto, Long id, Long nestedObjectId) {
+        updateObjectValidate.throwEmptyBodyException(dto);
+        var objectInDb = findOrFail(id);
+        var newObject = apiObjectMapper.modelToUpdatedModel(dto, objectInDb);
+        var updatedObject = new UpdatedObject<O,L>();
+        if(nestedObjectId != null) {
+            var nestedObjectInDb = nestedObjectRepository.findById(nestedObjectId)
+                    .orElseThrow(
+                    () -> new EntityNotFoundException("Entity with id: " + nestedObjectId + " not found")
+            );
+            updatedObject.setNestedObject(nestedObjectInDb);
+        }
+        updatedObject.setUpdatedObject(newObject);
+        return updatedObject;
     }
 
     public UpdatedObject<O,L> updateWithList(I dto, Long id, Class<O> target,
@@ -66,6 +83,7 @@ public class CreateAndUpdateEntityHelper<I, O, L, C> {
     public void create(C dto, Class<O> target) {
         var createdObject = apiObjectMapper.dtoToModel(dto, target);
         repository.save(createdObject);
+        repository.flush();
     }
 
     private O findOrFail(Long id) {
@@ -78,5 +96,6 @@ public class CreateAndUpdateEntityHelper<I, O, L, C> {
     public static class UpdatedObject<O, L> {
         private O updatedObject;
         private List<L> listOfObjects;
+        private L nestedObject;
     }
 }
