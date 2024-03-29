@@ -1,8 +1,8 @@
 package com.foodapi.foodapi.Services;
 
 import com.foodapi.foodapi.core.utils.ApiObjectMapper;
-import com.foodapi.foodapi.exceptions.EntityNotFoundException;
-import com.foodapi.foodapi.model.Product;
+import com.foodapi.foodapi.exceptions.exceptionClasses.EntityNotFoundException;
+import com.foodapi.foodapi.model.models.Product;
 import com.foodapi.foodapi.repository.ProductRepository;
 import com.foodapi.foodapi.repository.RestaurantRepository;
 import org.springframework.beans.factory.annotation.Autowired;

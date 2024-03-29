@@ -1,9 +1,9 @@
 package com.foodapi.foodapi.controllers;
 
-import com.foodapi.foodapi.DTO.StateDTO;
+import com.foodapi.foodapi.DTO.state.StateDTO;
 import com.foodapi.foodapi.Services.StateService;
 import com.foodapi.foodapi.core.utils.ApiObjectMapper;
-import com.foodapi.foodapi.model.State;
+import com.foodapi.foodapi.model.models.State;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

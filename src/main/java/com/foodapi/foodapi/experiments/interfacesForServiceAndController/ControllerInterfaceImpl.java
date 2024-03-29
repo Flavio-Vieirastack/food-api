@@ -1,8 +1,8 @@
 package com.foodapi.foodapi.experiments.interfacesForServiceAndController;
 
-import com.foodapi.foodapi.DTO.RestaurantDTO;
-import com.foodapi.foodapi.DTO.RestaurantUpdateDTO;
-import com.foodapi.foodapi.model.Restaurant;
+import com.foodapi.foodapi.DTO.restaurant.RestaurantDTO;
+import com.foodapi.foodapi.DTO.restaurant.RestaurantUpdateDTO;
+import com.foodapi.foodapi.model.models.Restaurant;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;

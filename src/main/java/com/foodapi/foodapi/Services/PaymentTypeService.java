@@ -1,11 +1,10 @@
 package com.foodapi.foodapi.Services;
 
-import com.foodapi.foodapi.DTO.PaymentTypeDTO;
-import com.foodapi.foodapi.core.utils.ApiObjectMapper;
+import com.foodapi.foodapi.DTO.paymentType.PaymentTypeDTO;
 import com.foodapi.foodapi.core.utils.ServiceCallsExceptionHandler;
 import com.foodapi.foodapi.core.utils.CreateAndUpdateEntityHelper;
-import com.foodapi.foodapi.exceptions.EntityNotFoundException;
-import com.foodapi.foodapi.model.PaymentType;
+import com.foodapi.foodapi.exceptions.exceptionClasses.EntityNotFoundException;
+import com.foodapi.foodapi.model.models.PaymentType;
 import com.foodapi.foodapi.repository.PaymentTypeRepository;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
@@ -63,7 +62,7 @@ public class PaymentTypeService {
                 });
     }
 
-    private PaymentType findOrFail(Long id) {
+    public PaymentType findOrFail(Long id) {
         return paymentTypeRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Payment with id: " + id + " not found"));
     }

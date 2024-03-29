@@ -1,12 +1,12 @@
 package com.foodapi.foodapi.Services;
 
-import com.foodapi.foodapi.DTO.UserClientDTO;
-import com.foodapi.foodapi.DTO.UserClientUpdateDTO;
+import com.foodapi.foodapi.DTO.userClient.UserClientDTO;
+import com.foodapi.foodapi.DTO.userClient.UserClientUpdateDTO;
 import com.foodapi.foodapi.core.utils.CreateAndUpdateEntityHelper;
-import com.foodapi.foodapi.exceptions.EntityConflictException;
-import com.foodapi.foodapi.exceptions.EntityNotFoundException;
-import com.foodapi.foodapi.model.GroupPermissions;
-import com.foodapi.foodapi.model.UserClient;
+import com.foodapi.foodapi.exceptions.exceptionClasses.EntityConflictException;
+import com.foodapi.foodapi.exceptions.exceptionClasses.EntityNotFoundException;
+import com.foodapi.foodapi.model.models.GroupPermissions;
+import com.foodapi.foodapi.model.models.UserClient;
 import com.foodapi.foodapi.repository.GroupPermissionRepository;
 import com.foodapi.foodapi.repository.UserClientRepository;
 import jakarta.annotation.PostConstruct;
@@ -110,7 +110,7 @@ public class UserClientService {
         return updatedClient;
     }
 
-    private UserClient findOrFail(Long id) {
+    public UserClient findOrFail(Long id) {
         return userClientRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("User with id: " + id + " not found"));
     }

@@ -2,8 +2,8 @@ package com.foodapi.foodapi.Services;
 
 import com.foodapi.foodapi.core.utils.ApiObjectMapper;
 import com.foodapi.foodapi.core.utils.ServiceCallsExceptionHandler;
-import com.foodapi.foodapi.exceptions.EntityNotFoundException;
-import com.foodapi.foodapi.model.City;
+import com.foodapi.foodapi.exceptions.exceptionClasses.EntityNotFoundException;
+import com.foodapi.foodapi.model.models.City;
 import com.foodapi.foodapi.repository.CityRepository;
 import com.foodapi.foodapi.repository.StateRepository;
 import jakarta.transaction.Transactional;

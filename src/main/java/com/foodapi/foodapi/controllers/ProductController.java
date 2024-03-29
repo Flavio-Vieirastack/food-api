@@ -1,7 +1,7 @@
 package com.foodapi.foodapi.controllers;
 
 import com.foodapi.foodapi.Services.ProductService;
-import com.foodapi.foodapi.model.Product;
+import com.foodapi.foodapi.model.models.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,6 +1,6 @@
 package com.foodapi.foodapi.repository;
 
-import com.foodapi.foodapi.model.City;
+import com.foodapi.foodapi.model.models.City;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

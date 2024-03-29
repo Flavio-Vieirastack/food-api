@@ -1,6 +1,6 @@
 package com.foodapi.foodapi.core.utils;
 
-import com.foodapi.foodapi.exceptions.EntityNotFoundException;
+import com.foodapi.foodapi.exceptions.exceptionClasses.EntityNotFoundException;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;

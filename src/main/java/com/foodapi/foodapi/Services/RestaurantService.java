@@ -2,10 +2,10 @@ package com.foodapi.foodapi.Services;
 import com.foodapi.foodapi.core.utils.ApiObjectMapper;
 import com.foodapi.foodapi.core.utils.ServiceCallsExceptionHandler;
 import com.foodapi.foodapi.core.utils.UpdateObjectValidate;
-import com.foodapi.foodapi.exceptions.EntityConflictException;
-import com.foodapi.foodapi.exceptions.EntityNotFoundException;
-import com.foodapi.foodapi.model.Restaurant;
-import com.foodapi.foodapi.model.UserClient;
+import com.foodapi.foodapi.exceptions.exceptionClasses.EntityConflictException;
+import com.foodapi.foodapi.exceptions.exceptionClasses.EntityNotFoundException;
+import com.foodapi.foodapi.model.models.Restaurant;
+import com.foodapi.foodapi.model.models.UserClient;
 import com.foodapi.foodapi.repository.CityRepository;
 import com.foodapi.foodapi.repository.KitchenRepository;
 import com.foodapi.foodapi.repository.RestaurantRepository;
@@ -172,7 +172,7 @@ public class RestaurantService {
         searchOrNotFound(id).setOpen(false);
     }
 
-    private @NotNull Restaurant searchOrNotFound(Long id) {
+    public @NotNull Restaurant searchOrNotFound(Long id) {
         return restaurantRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Resource not found")
         );

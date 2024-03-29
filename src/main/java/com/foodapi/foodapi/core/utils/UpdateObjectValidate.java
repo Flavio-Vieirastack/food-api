@@ -1,6 +1,6 @@
 package com.foodapi.foodapi.core.utils;
 
-import com.foodapi.foodapi.exceptions.EmptyUpdateBodyException;
+import com.foodapi.foodapi.exceptions.exceptionClasses.EmptyUpdateBodyException;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;

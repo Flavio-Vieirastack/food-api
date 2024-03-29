@@ -1,11 +1,12 @@
 package com.foodapi.foodapi.core.utils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.*;
-import com.foodapi.foodapi.exceptions.ApiObjectMapperException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.foodapi.foodapi.exceptions.exceptionClasses.ApiObjectMapperException;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.expression.spel.InternalParseException;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -22,6 +23,9 @@ public class ApiObjectMapper<T> {
 
     public T dtoToModel(Object dto, Class<T> model) {
         return mapper.convertValue(dto, model);
+    }
+    public T convert(Object from, Class<T> to) {
+        return mapper.convertValue(from, to);
     }
     public T modelToDto(Class<T> dto, Object model) {
         return mapper.convertValue(model, dto);

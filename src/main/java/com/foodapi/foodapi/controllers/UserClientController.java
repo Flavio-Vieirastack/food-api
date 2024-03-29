@@ -1,10 +1,10 @@
 package com.foodapi.foodapi.controllers;
 
-import com.foodapi.foodapi.DTO.UserClientDTO;
-import com.foodapi.foodapi.DTO.UserClientUpdateDTO;
+import com.foodapi.foodapi.DTO.userClient.UserClientDTO;
+import com.foodapi.foodapi.DTO.userClient.UserClientUpdateDTO;
 import com.foodapi.foodapi.Services.UserClientService;
-import com.foodapi.foodapi.model.GroupPermissions;
-import com.foodapi.foodapi.model.UserClient;
+import com.foodapi.foodapi.model.models.GroupPermissions;
+import com.foodapi.foodapi.model.models.UserClient;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

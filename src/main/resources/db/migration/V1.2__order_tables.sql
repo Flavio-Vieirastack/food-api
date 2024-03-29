@@ -13,7 +13,7 @@ create table order_item_product_list (
 create table orders (
 cancel_date timestamp(6),
     delivery_tax numeric(38,2) not null,
-    order_status tinyint check (order_status between 0 and 3),
+    order_status varchar(20) not null,
     sub_total numeric(38,2) not null,
     total_value numeric(38,2) not null,
     address_city bigint,

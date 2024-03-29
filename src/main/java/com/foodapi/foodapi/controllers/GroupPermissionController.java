@@ -1,10 +1,10 @@
 package com.foodapi.foodapi.controllers;
 
-import com.foodapi.foodapi.DTO.GroupPermissionDTO;
-import com.foodapi.foodapi.DTO.GroupPermissionUpdateDTO;
+import com.foodapi.foodapi.DTO.groupPermission.GroupPermissionDTO;
+import com.foodapi.foodapi.DTO.groupPermission.GroupPermissionUpdateDTO;
 import com.foodapi.foodapi.Services.GroupPermissionService;
-import com.foodapi.foodapi.model.GroupPermissions;
-import com.foodapi.foodapi.model.Permission;
+import com.foodapi.foodapi.model.models.GroupPermissions;
+import com.foodapi.foodapi.model.models.Permission;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

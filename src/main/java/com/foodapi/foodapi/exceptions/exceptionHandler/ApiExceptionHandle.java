@@ -2,8 +2,8 @@ package com.foodapi.foodapi.exceptions.exceptionHandler;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import com.foodapi.foodapi.exceptions.*;
 import com.foodapi.foodapi.exceptions.exceptionBody.ExceptionBody;
+import com.foodapi.foodapi.exceptions.exceptionClasses.*;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.dao.DataIntegrityViolationException;

@@ -1,16 +1,15 @@
 package com.foodapi.foodapi.Services;
 
-import com.foodapi.foodapi.DTO.GroupPermissionDTO;
-import com.foodapi.foodapi.DTO.GroupPermissionUpdateDTO;
-import com.foodapi.foodapi.DTO.UserClientUpdateDTO;
+import com.foodapi.foodapi.DTO.groupPermission.GroupPermissionDTO;
+import com.foodapi.foodapi.DTO.groupPermission.GroupPermissionUpdateDTO;
 import com.foodapi.foodapi.core.utils.ApiObjectMapper;
 import com.foodapi.foodapi.core.utils.CreateAndUpdateEntityHelper;
 import com.foodapi.foodapi.core.utils.HasDuplicatedItems;
 import com.foodapi.foodapi.core.utils.ServiceCallsExceptionHandler;
-import com.foodapi.foodapi.exceptions.EmptyUpdateBodyException;
-import com.foodapi.foodapi.exceptions.EntityNotFoundException;
-import com.foodapi.foodapi.model.GroupPermissions;
-import com.foodapi.foodapi.model.Permission;
+import com.foodapi.foodapi.exceptions.exceptionClasses.EmptyUpdateBodyException;
+import com.foodapi.foodapi.exceptions.exceptionClasses.EntityNotFoundException;
+import com.foodapi.foodapi.model.models.GroupPermissions;
+import com.foodapi.foodapi.model.models.Permission;
 import com.foodapi.foodapi.repository.GroupPermissionRepository;
 import com.foodapi.foodapi.repository.PermissionRepository;
 import jakarta.annotation.PostConstruct;

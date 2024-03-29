@@ -1,10 +1,10 @@
 package com.foodapi.foodapi.controllers;
 
-import com.foodapi.foodapi.DTO.CityDTO;
+import com.foodapi.foodapi.DTO.city.CityDTO;
 import com.foodapi.foodapi.Services.CityService;
 import com.foodapi.foodapi.core.utils.ApiObjectMapper;
-import com.foodapi.foodapi.model.City;
-import com.foodapi.foodapi.model.State;
+import com.foodapi.foodapi.model.models.City;
+import com.foodapi.foodapi.model.models.State;
 import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;

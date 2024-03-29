@@ -1,6 +1,6 @@
 package com.foodapi.foodapi.model.Embedded;
 
-import com.foodapi.foodapi.model.City;
+import com.foodapi.foodapi.model.models.City;
 import jakarta.persistence.*;
 import lombok.Data;
 

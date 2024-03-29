@@ -1,14 +1,14 @@
 package com.foodapi.foodapi.controllers;
 
-import com.foodapi.foodapi.DTO.RestaurantDTO;
-import com.foodapi.foodapi.DTO.RestaurantUpdateDTO;
+import com.foodapi.foodapi.DTO.restaurant.RestaurantDTO;
+import com.foodapi.foodapi.DTO.restaurant.RestaurantUpdateDTO;
 import com.foodapi.foodapi.Services.RestaurantService;
 import com.foodapi.foodapi.core.utils.ApiObjectMapper;
-import com.foodapi.foodapi.model.City;
+import com.foodapi.foodapi.model.models.City;
 import com.foodapi.foodapi.model.Embedded.Address;
-import com.foodapi.foodapi.model.Kitchen;
-import com.foodapi.foodapi.model.Restaurant;
-import com.foodapi.foodapi.model.UserClient;
+import com.foodapi.foodapi.model.models.Kitchen;
+import com.foodapi.foodapi.model.models.Restaurant;
+import com.foodapi.foodapi.model.models.UserClient;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

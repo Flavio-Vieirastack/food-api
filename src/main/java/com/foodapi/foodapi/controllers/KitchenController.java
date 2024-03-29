@@ -1,9 +1,9 @@
 package com.foodapi.foodapi.controllers;
 
-import com.foodapi.foodapi.DTO.KitchenDTO;
+import com.foodapi.foodapi.DTO.kitchen.KitchenDTO;
 import com.foodapi.foodapi.Services.KitchenService;
 import com.foodapi.foodapi.core.utils.ApiObjectMapper;
-import com.foodapi.foodapi.model.Kitchen;
+import com.foodapi.foodapi.model.models.Kitchen;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

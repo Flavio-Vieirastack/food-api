@@ -1,8 +1,8 @@
 package com.foodapi.foodapi.controllers;
 
-import com.foodapi.foodapi.DTO.PaymentTypeDTO;
+import com.foodapi.foodapi.DTO.paymentType.PaymentTypeDTO;
 import com.foodapi.foodapi.Services.PaymentTypeService;
-import com.foodapi.foodapi.model.PaymentType;
+import com.foodapi.foodapi.model.models.PaymentType;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
