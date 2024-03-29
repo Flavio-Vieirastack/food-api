@@ -2,11 +2,14 @@ package com.foodapi.foodapi.Services;
 import com.foodapi.foodapi.core.utils.ApiObjectMapper;
 import com.foodapi.foodapi.core.utils.ServiceCallsExceptionHandler;
 import com.foodapi.foodapi.core.utils.UpdateObjectValidate;
+import com.foodapi.foodapi.exceptions.EntityConflictException;
 import com.foodapi.foodapi.exceptions.EntityNotFoundException;
 import com.foodapi.foodapi.model.Restaurant;
+import com.foodapi.foodapi.model.UserClient;
 import com.foodapi.foodapi.repository.CityRepository;
 import com.foodapi.foodapi.repository.KitchenRepository;
 import com.foodapi.foodapi.repository.RestaurantRepository;
+import com.foodapi.foodapi.repository.UserClientRepository;
 import jakarta.transaction.Transactional;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,9 @@ public class RestaurantService {
 
     @Autowired
     private KitchenRepository kitchenRepository;
+
+    @Autowired
+    private UserClientRepository userClientRepository;
 
     @Autowired
     private ApiObjectMapper<Restaurant> apiObjectMapper;
@@ -40,6 +46,31 @@ public class RestaurantService {
 
     public Restaurant getOne(Long id) {
         return searchOrNotFound(id);
+    }
+
+    public List<UserClient> getAllUsers(Long restaurantId) {
+        return searchOrNotFound(restaurantId).getUsers();
+    }
+
+    @Transactional
+    public void addUser(Long restaurantId, Long userId) {
+        var userInDb = userClientRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Not found"));
+        var restaurant = searchOrNotFound(restaurantId);
+        for (UserClient user : restaurant.getUsers()) {
+            if(user.equals(userInDb)){
+                throw new EntityConflictException("Conflict");
+            }
+        }
+        restaurant.addUser(userInDb);
+    }
+
+    @Transactional
+    public void removeUser(Long restaurantId, Long userId) {
+        var user = userClientRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Not found"));
+        var restaurant = searchOrNotFound(restaurantId);
+        restaurant.removeUser(user);
     }
 
     @Transactional
@@ -121,6 +152,15 @@ public class RestaurantService {
        searchOrNotFound(id).setActive(true);
        // Não tem necessidade de chamar o save pois como roda em uma transação
         //o spring já sabe que isso deve ir para o banco de dados
+    }
+
+    @Transactional
+    public void activateVariousRestaurants(List<Long> restaurantIds) {
+        restaurantIds.forEach(this::activateRestaurant);
+    }
+    @Transactional
+    public void inactivateVariousRestaurants(List<Long> restaurantIds) {
+        restaurantIds.forEach(this::inactivateRestaurant);
     }
 
     @Transactional

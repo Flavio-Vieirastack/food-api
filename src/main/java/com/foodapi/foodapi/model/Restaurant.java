@@ -45,5 +45,20 @@ public class Restaurant {
     @OneToMany(mappedBy = "restaurant")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<Product> products = new ArrayList<>();
+    @ManyToMany
+    @JoinTable(name = "restaurant_users",
+            joinColumns = @JoinColumn(
+            name = "restaurant_id"
+    ),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private List<UserClient> users;
     private boolean isOpen;
+
+    public void addUser(UserClient userClient) {
+        getUsers().add(userClient);
+    }
+    public void removeUser(UserClient userClient) {
+        getUsers().remove(userClient);
+    }
 }

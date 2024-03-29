@@ -8,6 +8,7 @@ import com.foodapi.foodapi.model.City;
 import com.foodapi.foodapi.model.Embedded.Address;
 import com.foodapi.foodapi.model.Kitchen;
 import com.foodapi.foodapi.model.Restaurant;
+import com.foodapi.foodapi.model.UserClient;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,6 +37,32 @@ public class RestaurantController {
     public ResponseEntity<Restaurant> getOne(@PathVariable Long id) {
         var restaurant = restaurantService.getOne(id);
         return ResponseEntity.ok(restaurant);
+    }
+
+    @GetMapping("/users/{id}")
+    public ResponseEntity<List<UserClient>> getAllUsers(@PathVariable Long id) {
+        return ResponseEntity.ok(restaurantService.getAllUsers(id));
+    }
+
+    @PutMapping("/user/{userId}/restaurant/{restaurantId}")
+    public ResponseEntity<?> addUser(@PathVariable Long userId, @PathVariable Long restaurantId) {
+        restaurantService.addUser(restaurantId, userId);
+        return ResponseEntity.ok().build();
+    }
+    @PutMapping("/activate-many")
+    public ResponseEntity<?> activateVarious(@RequestBody List<Long> restaurantsIds) {
+        restaurantService.activateVariousRestaurants(restaurantsIds);
+        return ResponseEntity.ok().build();
+    }
+    @PutMapping("/inactivate-many")
+    public ResponseEntity<?> inactivateVarious(@RequestBody List<Long> restaurantsIds) {
+        restaurantService.inactivateVariousRestaurants(restaurantsIds);
+        return ResponseEntity.ok().build();
+    }
+    @DeleteMapping("/user/{userId}/restaurant/{restaurantId}")
+    public ResponseEntity<?> removeUser(@PathVariable Long userId, @PathVariable Long restaurantId) {
+        restaurantService.removeUser(restaurantId, userId);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping
