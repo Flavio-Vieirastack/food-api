@@ -27,9 +27,6 @@ public class ApiObjectMapper<T> {
     public T convert(Object from, Class<T> to) {
         return mapper.convertValue(from, to);
     }
-    public T modelToDto(Class<T> dto, Object model) {
-        return mapper.convertValue(model, dto);
-    }
 
     public T modelToUpdatedModel(Object model, T updatedModel) {
         try {
