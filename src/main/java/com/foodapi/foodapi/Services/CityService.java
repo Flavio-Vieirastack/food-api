@@ -74,7 +74,7 @@ public class CityService {
                 });
     }
 
-    private @NotNull City searchOrNotFound(Long id) {
+    public @NotNull City searchOrNotFound(Long id) {
         return cityRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Resource not found")
         );

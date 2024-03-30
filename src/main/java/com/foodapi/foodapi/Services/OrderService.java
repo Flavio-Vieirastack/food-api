@@ -1,12 +1,14 @@
 package com.foodapi.foodapi.Services;
 
 import com.foodapi.foodapi.DTO.order.CreateOrderDTO;
+import com.foodapi.foodapi.DTO.order.OrderItemInputDTO;
+import com.foodapi.foodapi.DTO.order.OrdersOutput;
 import com.foodapi.foodapi.core.utils.ApiObjectMapper;
+import com.foodapi.foodapi.core.utils.HasDuplicatedItems;
+import com.foodapi.foodapi.exceptions.exceptionClasses.EntityConflictException;
 import com.foodapi.foodapi.exceptions.exceptionClasses.EntityNotFoundException;
 import com.foodapi.foodapi.model.models.OrderItem;
 import com.foodapi.foodapi.model.models.Orders;
-import com.foodapi.foodapi.DTO.order.OrdersOutput;
-import com.foodapi.foodapi.repository.OrderItemsRepository;
 import com.foodapi.foodapi.repository.OrderRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +32,13 @@ public class OrderService {
     PaymentTypeService paymentTypeService;
 
     @Autowired
-    OrderItemsRepository orderItemsRepository;
+    CityService cityService;
+
+    @Autowired
+    ProductService productService;
+
+    @Autowired
+    HasDuplicatedItems hasDuplicatedItems;
 
     @Autowired
     ApiObjectMapper<Orders> apiObjectMapper;
@@ -55,27 +63,38 @@ public class OrderService {
 
     @Transactional
     public void create(CreateOrderDTO createOrderDTO) {
+        hasDuplicatedItems.hasDuplicates(createOrderDTO.orderItemInputDTO());
+        var city = cityService.searchOrNotFound(createOrderDTO.cityId());
         var restaurant = restaurantService.searchOrNotFound(
                 createOrderDTO.restaurantId());
         var user = userClientService.findOrFail(createOrderDTO.userId());
-
         var paymentType = paymentTypeService.findOrFail(createOrderDTO.paymentTypeId());
-
         List<OrderItem> orderItems = new ArrayList<>();
-
-        for (Long orderItemID : createOrderDTO.ordersItemsId()) {
-            var orderItem = orderItemsRepository.findById(orderItemID).orElseThrow(
-                    () -> new EntityNotFoundException("Not found")
-            );
+        for (OrderItemInputDTO orderItemInputDTO : createOrderDTO.orderItemInputDTO()) {
+            var orderItem = new OrderItem();
+            var product = productService.findOrFail(orderItemInputDTO.productId());
+            if(restaurant.getProducts().contains(product)) {
+                orderItem.addProduct(product);
+                orderItem.setUnitaryPrice(product.getPrice());
+                orderItem.totalPrice();
+            } else {
+                throw new EntityConflictException("The restaurant not contains this product");
+            }
+            orderItem.setQuantity(orderItemInputDTO.quantity());
+            orderItem.setObservation(orderItemInputDTO.observation());
             orderItems.add(orderItem);
         }
         var newOrder = apiObjectMapper.dtoToModel(createOrderDTO, Orders.class);
         newOrder.setOrderItem(orderItems);
         newOrder.setRestaurant(restaurant);
-        newOrder.setUserClient(user);
-        newOrder.addPaymentType(paymentType);
+        newOrder.setUserClient(user); //Adicionar depois via token
+        if(restaurant.getPaymentTypes().contains(paymentType)) {
+            newOrder.addPaymentType(paymentType);
+        } else {
+            throw new EntityConflictException("The restaurant not contains this payment type");
+        }
+        newOrder.getAddress().setCity(city);
         orderRepository.save(newOrder);
-        orderRepository.flush();
     }
 
     private Orders findOrFail(Long id) {

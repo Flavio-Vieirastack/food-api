@@ -38,7 +38,7 @@ public class Orders implements ToShort<OrdersOutput> {
     private OrderStatus orderStatus;
     @OneToMany
     private List<PaymentType> paymentType = new ArrayList<>();
-    @OneToMany
+    @OneToMany(cascade=CascadeType.PERSIST) //Resolve o erro: TransientPropertyValueException
     private List<OrderItem> orderItem = new ArrayList<>();
 
     @ManyToOne

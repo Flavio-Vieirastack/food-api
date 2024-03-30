@@ -2,8 +2,8 @@ package com.foodapi.foodapi.DTO.order;
 
 import com.foodapi.foodapi.model.Embedded.Address;
 import com.foodapi.foodapi.model.models.Orders;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -36,9 +36,11 @@ public record CreateOrderDTO(
         @NotNull
         Long paymentTypeId,
         @NotNull
-        Address address,
-        @NotEmpty
+        Long cityId,
         @NotNull
-        List<Long> ordersItemsId
+        Address address,
+        @NotNull
+        @Size(min = 1)
+        List<OrderItemInputDTO> orderItemInputDTO
 ) {
 }

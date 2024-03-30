@@ -1,6 +1,5 @@
 package com.foodapi.foodapi.Services;
 
-import com.foodapi.foodapi.core.utils.ApiObjectMapper;
 import com.foodapi.foodapi.exceptions.exceptionClasses.EntityNotFoundException;
 import com.foodapi.foodapi.model.models.Product;
 import com.foodapi.foodapi.repository.ProductRepository;
@@ -15,8 +14,6 @@ public class ProductService {
     @Autowired
     private ProductRepository productRepository;
 
-    @Autowired
-    private ApiObjectMapper<List<Product>> apiObjectMapper;
 
     @Autowired
     private RestaurantRepository restaurantRepository;
@@ -34,5 +31,11 @@ public class ProductService {
         return restaurant.getProducts().stream().filter(
                 product -> product.getId().equals(productId)
         ).findFirst().orElseThrow(() -> new EntityNotFoundException("Not found"));
+    }
+
+    public Product findOrFail(Long id) {
+        return productRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Not found")
+        );
     }
 }

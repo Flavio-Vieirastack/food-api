@@ -23,7 +23,6 @@ public class OrderItem implements ToShort<OrderItemOutputDTO> {
     private BigDecimal unitaryPrice;
     @Column(nullable = false)
     private BigDecimal totalPrice;
-    @Column(nullable = false)
     private String observation;
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
@@ -34,5 +33,14 @@ public class OrderItem implements ToShort<OrderItemOutputDTO> {
     @Override
     public OrderItemOutputDTO toShort(ApiObjectMapper<OrderItemOutputDTO> apiObjectMapper) {
         return apiObjectMapper.convert(this, OrderItemOutputDTO.class);
+    }
+    
+    public void totalPrice() {
+        var quantityDecimal = new BigDecimal(quantity);
+        setTotalPrice(quantityDecimal.multiply(unitaryPrice));
+    }
+
+    public void addProduct(Product product) {
+        getProductList().add(product);
     }
 }
