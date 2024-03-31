@@ -6,8 +6,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-
 @Service
 public class OrderStatusService {
     @Autowired
@@ -17,14 +15,14 @@ public class OrderStatusService {
     public void confirm(Long orderId) {
        var order = changeStatus(
                orderId, Orders.OrderStatus.CONFIRMED, Orders.OrderStatus.CREATED);
-       order.setConfirmationDate(LocalDateTime.now());
+       order.confirm();
     }
 
     @Transactional
     public void delivered(Long orderId) {
        var order = changeStatus(
                orderId, Orders.OrderStatus.DELIVERED, Orders.OrderStatus.CONFIRMED);
-       order.setDeliveryDate(LocalDateTime.now());
+       order.delivered();
     }
     @Transactional
     public void cancel(Long orderId) {
@@ -32,8 +30,7 @@ public class OrderStatusService {
         if(!order.getOrderStatus().equals(Orders.OrderStatus.CONFIRMED) && order.getOrderStatus().equals(Orders.OrderStatus.DELIVERED)) {
             throw new EntityConflictException("Status is not confirmed or is delivered");
         }
-        order.setOrderStatus(Orders.OrderStatus.CANCELED);
-        order.setCancelDate(LocalDateTime.now());
+        order.cancel();
     }
 
     private Orders changeStatus(Long orderId, Orders.OrderStatus newOrderStatus, Orders.OrderStatus statusToCompare) {

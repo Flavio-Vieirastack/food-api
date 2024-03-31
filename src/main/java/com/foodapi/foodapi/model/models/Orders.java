@@ -58,4 +58,19 @@ public class Orders implements ToShort<OrdersOutput> {
     public OrdersOutput toShort(ApiObjectMapper<OrdersOutput> apiObjectMapper) {
         return apiObjectMapper.convert(this, OrdersOutput.class);
     }
+
+    public void confirm() {
+        setOrderStatus(OrderStatus.CONFIRMED);
+        setConfirmationDate(LocalDateTime.now());
+    }
+
+    public void delivered() {
+        setOrderStatus(OrderStatus.DELIVERED);
+        setDeliveryDate(LocalDateTime.now());
+    }
+    public void cancel() {
+        setOrderStatus(OrderStatus.CANCELED);
+        setCancelDate(LocalDateTime.now());
+    }
+
 }
