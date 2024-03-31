@@ -73,13 +73,12 @@ public class OrderService {
         for (OrderItemInputDTO orderItemInputDTO : createOrderDTO.orderItemInputDTO()) {
             var orderItem = new OrderItem();
             var product = productService.findOrFail(orderItemInputDTO.productId());
-            if(restaurant.getProducts().contains(product)) {
-                orderItem.addProduct(product);
-                orderItem.setUnitaryPrice(product.getPrice());
-                orderItem.totalPrice();
-            } else {
+            if(!restaurant.getProducts().contains(product)) {
                 throw new EntityConflictException("The restaurant not contains this product");
             }
+            orderItem.addProduct(product);
+            orderItem.setUnitaryPrice(product.getPrice());
+            orderItem.totalPrice();
             orderItem.setQuantity(orderItemInputDTO.quantity());
             orderItem.setObservation(orderItemInputDTO.observation());
             orderItems.add(orderItem);
@@ -88,16 +87,15 @@ public class OrderService {
         newOrder.setOrderItem(orderItems);
         newOrder.setRestaurant(restaurant);
         newOrder.setUserClient(user); //Adicionar depois via token
-        if(restaurant.getPaymentTypes().contains(paymentType)) {
-            newOrder.addPaymentType(paymentType);
-        } else {
+        if(!restaurant.getPaymentTypes().contains(paymentType)) {
             throw new EntityConflictException("The restaurant not contains this payment type");
         }
+        newOrder.addPaymentType(paymentType);
         newOrder.getAddress().setCity(city);
         orderRepository.save(newOrder);
     }
 
-    private Orders findOrFail(Long id) {
+    public Orders findOrFail(Long id) {
         return orderRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Not found")
         );
