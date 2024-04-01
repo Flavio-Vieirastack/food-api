@@ -10,6 +10,8 @@ import java.util.ArrayList;
 public class OrderSpecs {
     public static Specification<Orders> filterBy(OrderInputFilterDTO orderInputFilterDTO) {
         return (root, query, criteriaBuilder) -> {
+            root.fetch("userClient");// serve para evitar que o spring faça vários selects
+            root.fetch("restaurant").fetch("kitchen");// serve para evitar que o spring faça vários selects
             var predicates = new ArrayList<Predicate>();
             if(orderInputFilterDTO.clientId() != null) {
                 predicates.add(criteriaBuilder.equal(
