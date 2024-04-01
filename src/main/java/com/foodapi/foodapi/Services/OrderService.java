@@ -1,16 +1,15 @@
 package com.foodapi.foodapi.Services;
 
-import com.foodapi.foodapi.DTO.order.CreateOrderDTO;
-import com.foodapi.foodapi.DTO.order.OrderFilter;
-import com.foodapi.foodapi.DTO.order.OrderItemInputDTO;
-import com.foodapi.foodapi.DTO.order.OrdersOutput;
+import com.foodapi.foodapi.DTO.order.*;
 import com.foodapi.foodapi.core.utils.ApiObjectMapper;
 import com.foodapi.foodapi.core.utils.HasDuplicatedItems;
+import com.foodapi.foodapi.core.utils.ObjectValidate;
 import com.foodapi.foodapi.exceptions.exceptionClasses.EntityConflictException;
 import com.foodapi.foodapi.exceptions.exceptionClasses.EntityNotFoundException;
 import com.foodapi.foodapi.model.models.OrderItem;
 import com.foodapi.foodapi.model.models.Orders;
 import com.foodapi.foodapi.repository.OrderRepository;
+import com.foodapi.foodapi.specs.OrderSpecs;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,38 +21,48 @@ import java.util.stream.Collectors;
 @Service
 public class OrderService {
     @Autowired
-    OrderRepository orderRepository;
+    private OrderRepository orderRepository;
 
     @Autowired
-    RestaurantService restaurantService;
+    private ObjectValidate objectValidate;
 
     @Autowired
-    UserClientService userClientService;
+    private RestaurantService restaurantService;
 
     @Autowired
-    PaymentTypeService paymentTypeService;
+    private UserClientService userClientService;
 
     @Autowired
-    CityService cityService;
+    private PaymentTypeService paymentTypeService;
 
     @Autowired
-    ProductService productService;
+    private CityService cityService;
 
     @Autowired
-    HasDuplicatedItems hasDuplicatedItems;
+    private ProductService productService;
 
     @Autowired
-    ApiObjectMapper<Orders> apiObjectMapper;
+    private HasDuplicatedItems hasDuplicatedItems;
+
     @Autowired
-    ApiObjectMapper<OrdersOutput> apiObjectMapperOutput;
+    private ApiObjectMapper<Orders> apiObjectMapper;
     @Autowired
-    ApiObjectMapper<OrderFilter> apiObjectMapperFilter;
+    private ApiObjectMapper<OrdersOutput> apiObjectMapperOutput;
+    @Autowired
+    private ApiObjectMapper<OrderFilter> apiObjectMapperFilter;
 
     public List<OrderFilter> filter() {
         var orders = orderRepository.findAll();
         return orders.stream().map(
                 (order) -> order.filterOrder(apiObjectMapperFilter)
         ).collect(Collectors.toList());
+    }
+
+    public List<Orders> filterOrdersBy(OrderInputFilterDTO orderInputFilterDTO) {
+        objectValidate.throwEmptyBodyException(orderInputFilterDTO);
+        return orderRepository.findAll(
+                OrderSpecs.filterBy(orderInputFilterDTO)
+        );
     }
 
     public List<OrdersOutput> getAll() {

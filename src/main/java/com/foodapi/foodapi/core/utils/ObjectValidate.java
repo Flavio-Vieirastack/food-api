@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 @Component
-public class UpdateObjectValidate {
+public class ObjectValidate {
 
     public void throwEmptyBodyException(Object target) {
         var result = Arrays.stream(target.getClass()

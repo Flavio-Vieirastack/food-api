@@ -21,13 +21,13 @@ public class CreateAndUpdateEntityHelper<I, O, L, C> {
     ApiObjectMapper<O> apiObjectMapper;
 
     @Autowired
-    UpdateObjectValidate updateObjectValidate;
+    ObjectValidate objectValidate;
 
     @Autowired
     HasDuplicatedItems hasDuplicatedItems;
 
     public O update(I dto, Long id, Class<O> target) {
-        updateObjectValidate.throwEmptyBodyException(dto);
+        objectValidate.throwEmptyBodyException(dto);
         var objectInDb = findOrFail(id);
         var newObject = apiObjectMapper.dtoToModel(dto, target);
         var updatedObject = apiObjectMapper.modelToUpdatedModel(newObject, objectInDb);
@@ -37,7 +37,7 @@ public class CreateAndUpdateEntityHelper<I, O, L, C> {
     }
 
     public UpdatedOrCreatedObject<O,L> updateWithOneNestedObject(I dto, Long id, Long nestedObjectId) {
-        updateObjectValidate.throwEmptyBodyException(dto);
+        objectValidate.throwEmptyBodyException(dto);
         var objectInDb = findOrFail(id);
         var newObject = apiObjectMapper.modelToUpdatedModel(dto, objectInDb);
         var updatedObject = new UpdatedOrCreatedObject<O,L>();
@@ -54,8 +54,8 @@ public class CreateAndUpdateEntityHelper<I, O, L, C> {
 
     public UpdatedOrCreatedObject<O,L> updateWithList(I dto, Long id, Class<O> target,
                                                       List<Long> ids) {
-        updateObjectValidate.throwEmptyListException(ids, "List of ids are empty");
-        updateObjectValidate.throwEmptyBodyException(dto);
+        objectValidate.throwEmptyListException(ids, "List of ids are empty");
+        objectValidate.throwEmptyBodyException(dto);
         var objectInDb = findOrFail(id);
         var model = apiObjectMapper.dtoToModel(dto, target);
         var newObject = apiObjectMapper.modelToUpdatedModel(objectInDb, model);

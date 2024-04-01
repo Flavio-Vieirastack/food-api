@@ -2,7 +2,7 @@ package com.foodapi.foodapi.Services;
 import com.foodapi.foodapi.DTO.restaurant.RestaurantOutputDTO;
 import com.foodapi.foodapi.core.utils.ApiObjectMapper;
 import com.foodapi.foodapi.core.utils.ServiceCallsExceptionHandler;
-import com.foodapi.foodapi.core.utils.UpdateObjectValidate;
+import com.foodapi.foodapi.core.utils.ObjectValidate;
 import com.foodapi.foodapi.exceptions.exceptionClasses.EntityConflictException;
 import com.foodapi.foodapi.exceptions.exceptionClasses.EntityNotFoundException;
 import com.foodapi.foodapi.model.models.Restaurant;
@@ -41,7 +41,7 @@ public class RestaurantService {
     private CityRepository cityRepository;
 
     @Autowired
-    private UpdateObjectValidate updateObjectValidate;
+    private ObjectValidate objectValidate;
 
     public List<RestaurantOutputDTO> getAll() {
         return restaurantRepository.findAll().stream().map(
@@ -96,9 +96,9 @@ public class RestaurantService {
 
     @Transactional
     public Restaurant update(@NotNull Restaurant restaurant, Long id) {
-        updateObjectValidate.throwEmptyBodyException(restaurant);
-        updateObjectValidate.throwEmptyListException(restaurant.getPaymentTypes(), "Empty list of payment types");
-        updateObjectValidate.throwEmptyListException(restaurant.getProducts(), "Empty list of products");
+        objectValidate.throwEmptyBodyException(restaurant);
+        objectValidate.throwEmptyListException(restaurant.getPaymentTypes(), "Empty list of payment types");
+        objectValidate.throwEmptyListException(restaurant.getProducts(), "Empty list of products");
         var restaurantInDB = searchOrNotFound(id);
         return serviceCallsExceptionHandler.executeOrThrowErrorsWithReturn(() -> {
                     var newRestaurant = apiObjectMapper.modelToUpdatedModel(

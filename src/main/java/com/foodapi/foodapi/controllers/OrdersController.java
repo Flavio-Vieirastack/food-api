@@ -3,6 +3,7 @@ package com.foodapi.foodapi.controllers;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.foodapi.foodapi.DTO.order.CreateOrderDTO;
+import com.foodapi.foodapi.DTO.order.OrderInputFilterDTO;
 import com.foodapi.foodapi.Services.OrderService;
 import com.foodapi.foodapi.model.models.Orders;
 import com.foodapi.foodapi.DTO.order.OrdersOutput;
@@ -42,6 +43,11 @@ public class OrdersController {
     @GetMapping
     public ResponseEntity<List<OrdersOutput>> findAll() {
         return ResponseEntity.ok(orderService.getAll());
+    }
+    @GetMapping("/filter-by")
+    public ResponseEntity<List<Orders>> filterAll(
+             OrderInputFilterDTO orderInputFilterDTO) {
+        return ResponseEntity.ok(orderService.filterOrdersBy(orderInputFilterDTO));
     }
 
     @PostMapping
