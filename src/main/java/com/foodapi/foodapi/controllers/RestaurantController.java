@@ -1,6 +1,7 @@
 package com.foodapi.foodapi.controllers;
 
 import com.foodapi.foodapi.DTO.restaurant.RestaurantDTO;
+import com.foodapi.foodapi.DTO.restaurant.RestaurantOutputDTO;
 import com.foodapi.foodapi.DTO.restaurant.RestaurantUpdateDTO;
 import com.foodapi.foodapi.Services.RestaurantService;
 import com.foodapi.foodapi.core.utils.ApiObjectMapper;
@@ -29,7 +30,7 @@ public class RestaurantController {
     ApiObjectMapper<Address> apiObjectMapperAddress;
 
     @GetMapping
-    public ResponseEntity<List<Restaurant>> getAll() {
+    public ResponseEntity<List<RestaurantOutputDTO>> getAll() {
         return ResponseEntity.ok(restaurantService.getAll());
     }
 

@@ -1,5 +1,6 @@
 package com.foodapi.foodapi.model.models;
 
+import com.foodapi.foodapi.DTO.order.OrderFilter;
 import com.foodapi.foodapi.DTO.order.OrdersOutput;
 import com.foodapi.foodapi.core.utils.ApiObjectMapper;
 import com.foodapi.foodapi.interfaces.ToShort;
@@ -57,6 +58,10 @@ public class Orders implements ToShort<OrdersOutput> {
     @Override
     public OrdersOutput toShort(ApiObjectMapper<OrdersOutput> apiObjectMapper) {
         return apiObjectMapper.convert(this, OrdersOutput.class);
+    }
+
+    public OrderFilter filterOrder(ApiObjectMapper<OrderFilter> apiObjectMapper) {
+        return apiObjectMapper.convert(this, OrderFilter.class);
     }
 
     public void confirm() {

@@ -1,6 +1,7 @@
 package com.foodapi.foodapi.Services;
 
 import com.foodapi.foodapi.DTO.order.CreateOrderDTO;
+import com.foodapi.foodapi.DTO.order.OrderFilter;
 import com.foodapi.foodapi.DTO.order.OrderItemInputDTO;
 import com.foodapi.foodapi.DTO.order.OrdersOutput;
 import com.foodapi.foodapi.core.utils.ApiObjectMapper;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -44,6 +46,15 @@ public class OrderService {
     ApiObjectMapper<Orders> apiObjectMapper;
     @Autowired
     ApiObjectMapper<OrdersOutput> apiObjectMapperOutput;
+    @Autowired
+    ApiObjectMapper<OrderFilter> apiObjectMapperFilter;
+
+    public List<OrderFilter> filter() {
+        var orders = orderRepository.findAll();
+        return orders.stream().map(
+                (order) -> order.filterOrder(apiObjectMapperFilter)
+        ).collect(Collectors.toList());
+    }
 
     public List<OrdersOutput> getAll() {
         List<OrdersOutput> ordersOutputs = new ArrayList<>();

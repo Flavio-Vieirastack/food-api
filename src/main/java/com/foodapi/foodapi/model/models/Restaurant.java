@@ -1,6 +1,5 @@
 package com.foodapi.foodapi.model.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.foodapi.foodapi.DTO.restaurant.RestaurantOutputDTO;
 import com.foodapi.foodapi.core.utils.ApiObjectMapper;
@@ -34,7 +33,6 @@ public class Restaurant implements ToShort<RestaurantOutputDTO> {
             joinColumns = @JoinColumn(name = "restaurant_id"),
             inverseJoinColumns = @JoinColumn(name = "payment_type_id")
     )
-    @JsonIgnore
     private List<PaymentType> paymentTypes = new ArrayList<>();
     @Embedded
     private Address address;

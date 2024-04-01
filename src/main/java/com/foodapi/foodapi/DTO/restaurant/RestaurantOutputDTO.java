@@ -1,5 +1,6 @@
 package com.foodapi.foodapi.DTO.restaurant;
 
+import com.foodapi.foodapi.model.models.Kitchen;
 import com.foodapi.foodapi.model.models.PaymentType;
 
 import java.math.BigDecimal;
@@ -10,8 +11,10 @@ public record RestaurantOutputDTO (
         String name,
         BigDecimal deliveryTax,
         boolean active,
-        List<PaymentType> paymentTypes,
-        boolean isOpen
+        boolean isOpen,
+        List<PaymentType>paymentTypes,
+        Kitchen kitchen
+
 ) {
 
 

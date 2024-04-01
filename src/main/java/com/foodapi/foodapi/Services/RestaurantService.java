@@ -1,4 +1,5 @@
 package com.foodapi.foodapi.Services;
+import com.foodapi.foodapi.DTO.restaurant.RestaurantOutputDTO;
 import com.foodapi.foodapi.core.utils.ApiObjectMapper;
 import com.foodapi.foodapi.core.utils.ServiceCallsExceptionHandler;
 import com.foodapi.foodapi.core.utils.UpdateObjectValidate;
@@ -15,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class RestaurantService {
@@ -29,6 +31,8 @@ public class RestaurantService {
 
     @Autowired
     private ApiObjectMapper<Restaurant> apiObjectMapper;
+    @Autowired
+    private ApiObjectMapper<RestaurantOutputDTO> apiObjectMapperResume;
 
     @Autowired
     private ServiceCallsExceptionHandler serviceCallsExceptionHandler;
@@ -39,9 +43,10 @@ public class RestaurantService {
     @Autowired
     private UpdateObjectValidate updateObjectValidate;
 
-    public List<Restaurant> getAll() {
-
-        return restaurantRepository.findAll();
+    public List<RestaurantOutputDTO> getAll() {
+        return restaurantRepository.findAll().stream().map(
+                (restaurant) -> restaurant.toShort(apiObjectMapperResume)
+        ).collect(Collectors.toList());
     }
 
     public Restaurant getOne(Long id) {
