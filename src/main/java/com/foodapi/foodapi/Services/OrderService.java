@@ -12,6 +12,9 @@ import com.foodapi.foodapi.repository.OrderRepository;
 import com.foodapi.foodapi.specs.OrderSpecs;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -65,16 +68,16 @@ public class OrderService {
         );
     }
 
-    public List<OrdersOutput> getAll() {
+    public Page<OrdersOutput> getAll(Pageable pageable) {
         List<OrdersOutput> ordersOutputs = new ArrayList<>();
-        var result = orderRepository.findAll();
+        var result = orderRepository.findAll(pageable);
         if (!result.isEmpty()) {
             for (Orders orders : result) {
                 var newOrders = orders.toShort(apiObjectMapperOutput);
                 ordersOutputs.add(newOrders);
             }
         }
-        return ordersOutputs;
+        return new PageImpl<>(ordersOutputs, pageable, result.getTotalElements());
     }
 
     public Orders findOne(Long id) {

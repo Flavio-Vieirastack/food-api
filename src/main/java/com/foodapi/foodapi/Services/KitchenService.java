@@ -8,6 +8,8 @@ import com.foodapi.foodapi.repository.KitchenRepository;
 import jakarta.transaction.Transactional;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,8 +25,9 @@ public class KitchenService {
     @Autowired
     private ApiObjectMapper<Kitchen> apiObjectMapper;
 
-    public List<Kitchen> getAll() {
-        return kitchenRepository.findAll();
+    public Page<Kitchen> getAll(Pageable pageable) {
+
+        return kitchenRepository.findAll(pageable);
     }
 
     public Kitchen getOne(Long id) {

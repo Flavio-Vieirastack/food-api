@@ -8,6 +8,8 @@ import com.foodapi.foodapi.Services.OrderService;
 import com.foodapi.foodapi.model.models.Orders;
 import com.foodapi.foodapi.DTO.order.OrdersOutput;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
@@ -41,8 +43,8 @@ public class OrdersController {
     }
 
     @GetMapping
-    public ResponseEntity<List<OrdersOutput>> findAll() {
-        return ResponseEntity.ok(orderService.getAll());
+    public ResponseEntity<Page<OrdersOutput>> findAll(Pageable pageable) {
+        return ResponseEntity.ok(orderService.getAll(pageable));
     }
     @GetMapping("/filter-by")
     public ResponseEntity<List<Orders>> filterAll(

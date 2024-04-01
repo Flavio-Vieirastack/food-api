@@ -6,6 +6,8 @@ import com.foodapi.foodapi.core.utils.ApiObjectMapper;
 import com.foodapi.foodapi.model.models.Kitchen;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,9 +24,8 @@ public class KitchenController {
 
 
     @GetMapping
-    public ResponseEntity<List<Kitchen>> getAll() {
-
-        return ResponseEntity.ok(kitchenService.getAll());
+    public ResponseEntity<Page<Kitchen>> getAll(Pageable pageable) {
+        return ResponseEntity.ok(kitchenService.getAll(pageable));
     }
     @GetMapping("/{id}")
     public ResponseEntity<Kitchen> findOne(@PathVariable Long id) {
