@@ -7,6 +7,7 @@ import com.foodapi.foodapi.DTO.order.OrderInputFilterDTO;
 import com.foodapi.foodapi.Services.OrderService;
 import com.foodapi.foodapi.model.models.Orders;
 import com.foodapi.foodapi.DTO.order.OrdersOutput;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -53,7 +54,7 @@ public class OrdersController {
     }
 
     @PostMapping
-    public void create(@RequestBody CreateOrderDTO createOrderDTO) {
+    public void create(@RequestBody @Valid CreateOrderDTO createOrderDTO) {
         orderService.create(createOrderDTO);
     }
 
