@@ -3,6 +3,7 @@ package com.foodapi.foodapi.controllers;
 import com.foodapi.foodapi.DTO.city.CityDTO;
 import com.foodapi.foodapi.Services.CityService;
 import com.foodapi.foodapi.core.utils.ApiObjectMapper;
+import com.foodapi.foodapi.core.utils.CachedResponseEntity;
 import com.foodapi.foodapi.model.models.City;
 import com.foodapi.foodapi.model.models.State;
 import jakarta.validation.Valid;
@@ -26,13 +27,13 @@ public class CityController {
 
     @GetMapping
     public ResponseEntity<List<City>> getAll() {
-        return ResponseEntity.ok(cityService.getAll());
+        return CachedResponseEntity.getCachedResponse(cityService.getAll());
     }
 
     @GetMapping("{id}")
     public ResponseEntity<City> getOne(@PathVariable Long id) {
         var city = cityService.geOne(id);
-        return ResponseEntity.ok(city);
+        return CachedResponseEntity.getCachedResponse(city);
     }
 
     @PostMapping

@@ -2,6 +2,7 @@ package com.foodapi.foodapi.controllers;
 
 import com.foodapi.foodapi.DTO.paymentType.PaymentTypeDTO;
 import com.foodapi.foodapi.Services.PaymentTypeService;
+import com.foodapi.foodapi.core.utils.CachedResponseEntity;
 import com.foodapi.foodapi.model.models.PaymentType;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +19,11 @@ public class PaymentTypeController {
     PaymentTypeService paymentTypeService;
     @GetMapping
     public ResponseEntity<List<PaymentType>> getAll() {
-        return ResponseEntity.ok(paymentTypeService.getAll());
+        return CachedResponseEntity.getCachedResponse(paymentTypeService.getAll());
     }
     @GetMapping("{id}")
     public ResponseEntity<PaymentType> getOne(@PathVariable Long id) {
-        return ResponseEntity.ok(paymentTypeService.getOne(id));
+        return CachedResponseEntity.getCachedResponse(paymentTypeService.getOne(id));
     }
 
     @PostMapping

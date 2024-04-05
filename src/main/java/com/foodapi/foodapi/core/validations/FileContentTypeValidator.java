@@ -13,7 +13,6 @@ public class FileContentTypeValidator implements ConstraintValidator<FileContent
         contentType = constraintAnnotation.allowed();
         ConstraintValidator.super.initialize(constraintAnnotation);
     }
-
     @Override
     public boolean isValid(MultipartFile value, ConstraintValidatorContext context) {
         return Arrays.asList(contentType).contains(value.getContentType());
